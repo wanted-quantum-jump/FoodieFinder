@@ -11,6 +11,8 @@ public enum ErrorCode {
     //User
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "U001", "이미 계정이 존재합니다."),
 
+    //Processor
+    UNPARSEABLE_DATA(HttpStatus.BAD_REQUEST, "P001", "파싱할 수 없는 Json 형식입니다."),
     ;
 
     private final HttpStatus httpStatus;
