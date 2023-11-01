@@ -18,7 +18,8 @@ public class UserService {
     @Transactional
     public Long saveUser(UserSignupRequest request) {
 
-        //todo 계정의 유니크 여부로 예외처리하기
+        //todo 예외 만들어서 변경하기
+        checkDuplicateAccount(request);
 
         String encryptedPassword = passwordEncoder.encrypt(request.getPassword());
 
@@ -30,5 +31,12 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         return savedUser.getId();
+    }
+
+    private void checkDuplicateAccount(UserSignupRequest request) {
+        userRepository.findByAccount(request.getAccount())
+                .ifPresent(user -> {
+                    throw new IllegalArgumentException();
+                });
     }
 }
