@@ -16,9 +16,8 @@ class RestaurantRepositoryTest {
     @Autowired
     RestaurantRepository restaurantRepository;
 
-    /**
-     * 테스트 시 아래 사용 바람.
-     */
+    //TODO: null 조건에 대한 단위테스트 추가
+
     @Test
     @DisplayName("저장 성공")
     void fullFilledRestaurant() {
@@ -43,7 +42,7 @@ class RestaurantRepositoryTest {
     }
 
     @Test
-    @DisplayName("가게이름 + 도로명 주소와 유니크 제약조건 위반 ")
+    @DisplayName("유니크 제약조건 : 가게이름 + 도로명 주소와 유니크 제약조건 위반 ")
     void checkUnique() {
         //given
         String SAME_ROADADDR = "경기도 화성시 반월동 869 (111호)";
@@ -80,7 +79,7 @@ class RestaurantRepositoryTest {
     }
 
     @Test
-    @DisplayName("가게이름이 같아도 도로명 주소 다르면 저장 가능")
+    @DisplayName("유니크 제약조건: 가게이름이 같아도 도로명 주소 다르면 저장 가능")
     void checkDiffBusinessPlaceName() {
         //given
         String SAME_BUSINESS_PLACE_NAME = "푸드 파인더 카페";
@@ -116,7 +115,7 @@ class RestaurantRepositoryTest {
     }
 
     @Test
-    @DisplayName("도로명 주소 같아도 가게이름 다르면 저장 가능")
+    @DisplayName("유니크 제약조건 : 도로명 주소 같아도 가게이름 다르면 저장 가능")
     void checkDiffRoadAddress() {
         //given
         String SAME_ROADADDR = "경기도 화성시 반월동 869 (111호)";
@@ -150,4 +149,5 @@ class RestaurantRepositoryTest {
         //than
         Assertions.assertThatNoException().isThrownBy(() -> restaurantRepository.save(restaurant2));
     }
+
 }
