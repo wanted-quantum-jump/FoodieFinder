@@ -33,7 +33,7 @@ public class RawRestaurant extends BaseTimeEntity {
     /**
      * 응답결과코드 : CODE
      */
-    private Integer code;
+    private String code;
 
     /**
      * 응답결과메세지 : MESSAGE
@@ -163,7 +163,7 @@ public class RawRestaurant extends BaseTimeEntity {
 
     // == 빌더 == //
     @Builder
-    public RawRestaurant(Integer listTotalCount, Integer code, String message, String apiVersion, String sigunName, String sigunCode, String businessPlaceName, String licenseDate, String businessStateName, String closeDate, Double locationArea, String waterFacilityTypeName, Integer maleEmployeeCount, Integer year, String multiUseBusinessEstablishment, String gradeDivisionName, Double totalFacilityScale, Integer femaleEmployeeCount, String businessSiteCircumferenceTypeName, String sanitationIndustryType, String sanitationBusinessCondition, Integer totalEmployeeCount, String roadAddress, String lotNumberAddress, Integer zipCode, Double latitude, Double longitude) {
+    public RawRestaurant(Integer listTotalCount, String code, String message, String apiVersion, String sigunName, String sigunCode, String businessPlaceName, String licenseDate, String businessStateName, String closeDate, Double locationArea, String waterFacilityTypeName, Integer maleEmployeeCount, Integer year, String multiUseBusinessEstablishment, String gradeDivisionName, Double totalFacilityScale, Integer femaleEmployeeCount, String businessSiteCircumferenceTypeName, String sanitationIndustryType, String sanitationBusinessCondition, Integer totalEmployeeCount, String roadAddress, String lotNumberAddress, Integer zipCode, Double latitude, Double longitude) {
         this.listTotalCount = listTotalCount;
         this.code = code;
         this.message = message;

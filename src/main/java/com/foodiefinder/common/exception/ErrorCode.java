@@ -1,4 +1,4 @@
-package com.common.exception;
+package com.foodiefinder.common.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
