@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 /**
  * 실제 API에서 이용되는 전처리 된 데이터입니다.
  *
- * @version 1.0
  * @author hyerijang
+ * @version 1.0
  * @see com.foodiefinder.common.entity.BaseTimeEntity
  */
 @Getter
@@ -89,7 +89,7 @@ public class Restaurant extends BaseTimeEntity {
     // == 빌더 == //
 
     @Builder
-    public Restaurant(String sigunName, String businessPlaceName, String businessStateName, String sanitationBusinessCondition, String roadAddress, String lotNumberAddress, Integer zipCode, Double latitude, Double longitude, Integer averageRating) {
+    public Restaurant(String sigunName, String businessPlaceName, String businessStateName, String sanitationBusinessCondition, String roadAddress, String lotNumberAddress, Integer zipCode, Double latitude, Double longitude) {
         this.sigunName = sigunName;
         this.businessPlaceName = businessPlaceName;
         this.businessStateName = businessStateName;
@@ -99,6 +99,5 @@ public class Restaurant extends BaseTimeEntity {
         this.zipCode = zipCode;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.averageRating = averageRating;
     }
 }

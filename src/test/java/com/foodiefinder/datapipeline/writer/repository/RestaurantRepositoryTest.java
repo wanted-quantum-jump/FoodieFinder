@@ -32,7 +32,6 @@ class RestaurantRepositoryTest {
                 .zipCode(12345)
                 .latitude(37.12345)
                 .longitude(127.12345)
-                .averageRating(4)
                 .build();
 
         //when
@@ -60,7 +59,6 @@ class RestaurantRepositoryTest {
                 .zipCode(12345)
                 .latitude(37.12345)
                 .longitude(127.12345)
-                .averageRating(4)
                 .build();
 
         Restaurant restaurant2 = Restaurant.builder()
@@ -73,7 +71,6 @@ class RestaurantRepositoryTest {
                 .zipCode(12345)
                 .latitude(37.12345)
                 .longitude(127.12345)
-                .averageRating(4)
                 .build();
 
         restaurantRepository.save(restaurant1);
@@ -98,7 +95,6 @@ class RestaurantRepositoryTest {
                 .zipCode(12345)
                 .latitude(37.12345)
                 .longitude(127.12345)
-                .averageRating(4)
                 .build();
 
         Restaurant restaurant2 = Restaurant.builder()
@@ -111,7 +107,6 @@ class RestaurantRepositoryTest {
                 .zipCode(12345)
                 .latitude(37.12345)
                 .longitude(127.12345)
-                .averageRating(4)
                 .build();
 
         restaurantRepository.save(restaurant1);
@@ -136,7 +131,6 @@ class RestaurantRepositoryTest {
                 .zipCode(12345)
                 .latitude(37.12345)
                 .longitude(127.12345)
-                .averageRating(4)
                 .build();
 
         Restaurant restaurant2 = Restaurant.builder()
@@ -149,7 +143,6 @@ class RestaurantRepositoryTest {
                 .zipCode(12345)
                 .latitude(37.12345)
                 .longitude(127.12345)
-                .averageRating(4)
                 .build();
 
         restaurantRepository.save(restaurant1);
