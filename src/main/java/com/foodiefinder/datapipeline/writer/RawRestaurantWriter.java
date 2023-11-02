@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+/***
+ * RawRestaurant 저장을 위한 Writer 입니다.
+ */
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -17,6 +20,10 @@ public class RawRestaurantWriter implements ItemWriter<List<RawRestaurant>> {
 
     private final RawRestaurantRepository rawRestaurantRepository;
 
+    /**
+     * restaurantList를 DB에 저장합니다.
+     * @param restaurantList
+     */
     @Override
     @Transactional
     public void write(List<RawRestaurant> restaurantList) {
@@ -24,6 +31,7 @@ public class RawRestaurantWriter implements ItemWriter<List<RawRestaurant>> {
     }
 
 
+    // == 저장 메소드 == //
     private List<RawRestaurant> saveAll(List<RawRestaurant> restaurantList) {
         List<RawRestaurant> savedResult = new ArrayList<>();
         for (RawRestaurant rawRestaurant : restaurantList) {
@@ -33,6 +41,7 @@ public class RawRestaurantWriter implements ItemWriter<List<RawRestaurant>> {
         }
         return savedResult;
     }
+
 
     private RawRestaurant save(RawRestaurant rawRestaurant) {
         try {
