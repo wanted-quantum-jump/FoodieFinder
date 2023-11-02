@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class SggTest {
+public class CityServiceTest {
     @Mock
     private SggRepository sggRepository;
 
