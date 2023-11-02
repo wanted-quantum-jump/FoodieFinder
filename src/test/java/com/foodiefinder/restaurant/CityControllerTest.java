@@ -37,7 +37,7 @@ public class CityControllerTest {
         given(sggService.getCities()).willReturn(responseDtos);
 
         // When & Then
-        mockMvc.perform(get("/sgg")
+        mockMvc.perform(get("/cities")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(responseDtos.size()))
