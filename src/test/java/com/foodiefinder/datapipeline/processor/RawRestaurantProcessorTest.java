@@ -130,9 +130,9 @@ class RawRestaurantProcessorTest {
         RootData rootData = RootData.of(jsonString);
         //when
         // RootData 객체에서 원하는 데이터 추출
-        int listTotalCount = rootData.getListTotalCount(); //listTotalCount
+        String listTotalCount = rootData.getListTotalCount(); //listTotalCount
         //than
-        Assertions.assertThat(listTotalCount).isEqualTo(4752);
+        Assertions.assertThat(listTotalCount).isEqualTo("4752");
     }
 
     @Test
@@ -158,7 +158,7 @@ class RawRestaurantProcessorTest {
         //when
         //헤더
         String apiVersion = rootData.getApiVersion();
-        int listTotalCount = rootData.getListTotalCount();
+        String listTotalCount = rootData.getListTotalCount();
         ResultElement resultElement = rootData.getResultElement();
 
         //row 배열

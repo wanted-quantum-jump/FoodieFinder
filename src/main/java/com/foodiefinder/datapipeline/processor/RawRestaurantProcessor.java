@@ -16,7 +16,7 @@ public class RawRestaurantProcessor implements ItemProcessor<String, List<RawRes
 
         //헤더
         String apiVersion = rootData.getApiVersion();
-        int listTotalCount = rootData.getListTotalCount();
+        String listTotalCount = rootData.getListTotalCount();
         ResultElement resultElement = rootData.getResultElement();
 
         //row 배열
@@ -29,7 +29,7 @@ public class RawRestaurantProcessor implements ItemProcessor<String, List<RawRes
         return rawRestaurantList;
     }
 
-    private RawRestaurant getRawRestaurant(String apiVersion, int listTotalCount, ResultElement resultElement, RowData rowData) {
+    private RawRestaurant getRawRestaurant(String apiVersion, String listTotalCount, ResultElement resultElement, RowData rowData) {
         RawRestaurant rawRestaurant = RawRestaurant.builder()
                 .listTotalCount(listTotalCount)
                 .code(resultElement.getCODE())

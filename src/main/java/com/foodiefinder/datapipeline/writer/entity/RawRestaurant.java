@@ -28,7 +28,7 @@ public class RawRestaurant extends BaseTimeEntity {
     /**
      * 행총건수 : LIST_TOTAL_COUNT
      */
-    private Integer listTotalCount;
+    private String listTotalCount;
 
     /**
      * 응답결과코드 : CODE
@@ -78,7 +78,7 @@ public class RawRestaurant extends BaseTimeEntity {
     /**
      * 소재지면적(㎡) : LOCPLC_AR
      */
-    private Double locationArea;
+    private String locationArea;
 
     /**
      * 급수시설구분명 : GRAD_FACLT_DIV_NM
@@ -88,12 +88,12 @@ public class RawRestaurant extends BaseTimeEntity {
     /**
      * 남성종사자수(명) : MALE_ENFLPSN_CNT
      */
-    private Integer maleEmployeeCount;
+    private String maleEmployeeCount;
 
     /**
      * 년도 : YY
      */
-    private Integer year;
+    private String year;
 
     /**
      * 다중이용업소여부 : MULTI_USE_BIZESTBL_YN
@@ -108,12 +108,12 @@ public class RawRestaurant extends BaseTimeEntity {
     /**
      * 총시설규모(㎡) : TOT_FACLT_SCALE
      */
-    private Double totalFacilityScale;
+    private String totalFacilityScale;
 
     /**
      * 여성종사자수(명) : FEMALE_ENFLPSN_CNT
      */
-    private Integer femaleEmployeeCount;
+    private String femaleEmployeeCount;
 
     /**
      * 영업장주변구분명 : BSNSITE_CIRCUMFR_DIV_NM
@@ -133,7 +133,7 @@ public class RawRestaurant extends BaseTimeEntity {
     /**
      * 총종업원수 : TOT_EMPLY_CNT
      */
-    private Integer totalEmployeeCount;
+    private String totalEmployeeCount;
 
     /**
      * 소재지도로명주소 : REFINE_ROADNM_ADDR
@@ -149,21 +149,21 @@ public class RawRestaurant extends BaseTimeEntity {
     /**
      * 소재지우편번호 : REFINE_ZIP_CD
      */
-    private Integer zipCode;
+    private String zipCode;
 
     /**
      * WGS84위도 : REFINE_WGS84_LAT
      */
-    private Double latitude;
+    private String latitude;
 
     /**
      * WGS84경도 : REFINE_WGS84_LOGT
      */
-    private Double longitude;
+    private String longitude;
 
     // == 빌더 == //
     @Builder
-    public RawRestaurant(Integer listTotalCount, String code, String message, String apiVersion, String sigunName, String sigunCode, String businessPlaceName, String licenseDate, String businessStateName, String closeDate, Double locationArea, String waterFacilityTypeName, Integer maleEmployeeCount, Integer year, String multiUseBusinessEstablishment, String gradeDivisionName, Double totalFacilityScale, Integer femaleEmployeeCount, String businessSiteCircumferenceTypeName, String sanitationIndustryType, String sanitationBusinessCondition, Integer totalEmployeeCount, String roadAddress, String lotNumberAddress, Integer zipCode, Double latitude, Double longitude) {
+    public RawRestaurant(String listTotalCount, String code, String message, String apiVersion, String sigunName, String sigunCode, String businessPlaceName, String licenseDate, String businessStateName, String closeDate, String locationArea, String waterFacilityTypeName, String maleEmployeeCount, String year, String multiUseBusinessEstablishment, String gradeDivisionName, String totalFacilityScale, String femaleEmployeeCount, String businessSiteCircumferenceTypeName, String sanitationIndustryType, String sanitationBusinessCondition, String totalEmployeeCount, String roadAddress, String lotNumberAddress, String zipCode, String latitude, String longitude) {
         this.listTotalCount = listTotalCount;
         this.code = code;
         this.message = message;

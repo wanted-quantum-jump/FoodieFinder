@@ -6,8 +6,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
+import com.foodiefinder.datapipeline.writer.entity.RawRestaurant;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RootData {
@@ -26,7 +28,7 @@ public class RootData {
         }
     }
 
-    public int getListTotalCount() {
+    public String getListTotalCount() {
         return this.dataElements.get(0).getHeadElements().get(0).getListTotalCount();
     }
 
@@ -56,7 +58,7 @@ public class RootData {
     @Getter
     public static class HeadElement {
         @JsonProperty("list_total_count")
-        private int listTotalCount;
+        private String listTotalCount;
         @JsonProperty("RESULT")
         private ResultElement resultElement;
         @JsonProperty("api_version")
@@ -98,21 +100,21 @@ public class RootData {
         @JsonProperty("CLSBIZ_DE")
         private String closeDate;
         @JsonProperty("LOCPLC_AR")
-        private Double locationArea;
+        private String locationArea;
         @JsonProperty("GRAD_FACLT_DIV_NM")
         private String waterFacilityTypeName;
         @JsonProperty("MALE_ENFLPSN_CNT")
-        private Integer maleEmployeeCount;
+        private String maleEmployeeCount;
         @JsonProperty("YY")
-        private Integer year;
+        private String year;
         @JsonProperty("MULTI_USE_BIZESTBL_YN")
         private String multiUseBusinessEstablishment;
         @JsonProperty("GRAD_DIV_NM")
         private String gradeDivisionName;
         @JsonProperty("TOT_FACLT_SCALE")
-        private Double totalFacilityScale;
+        private String totalFacilityScale;
         @JsonProperty("FEMALE_ENFLPSN_CNT")
-        private Integer femaleEmployeeCount;
+        private String femaleEmployeeCount;
         @JsonProperty("BSNSITE_CIRCUMFR_DIV_NM")
         private String businessSiteCircumferenceTypeName;
         @JsonProperty("SANITTN_INDUTYPE_NM")
@@ -120,17 +122,17 @@ public class RootData {
         @JsonProperty("SANITTN_BIZCOND_NM")
         private String sanitationBusinessCondition;
         @JsonProperty("TOT_EMPLY_CNT")
-        private Integer totalEmployeeCount;
+        private String totalEmployeeCount;
         @JsonProperty("REFINE_LOTNO_ADDR")
         private String lotNumberAddress;
         @JsonProperty("REFINE_ROADNM_ADDR")
         private String roadAddress;
         @JsonProperty("REFINE_ZIP_CD")
-        private Integer zipCode;
+        private String zipCode;
         @JsonProperty("REFINE_WGS84_LOGT")
-        private Double longitude;
+        private String longitude;
         @JsonProperty("REFINE_WGS84_LAT")
-        private Double latitude;
+        private String latitude;
 
         @Override
         public String toString() {
@@ -161,4 +163,49 @@ public class RootData {
                     '}';
         }
     }
+
+    public List<RawRestaurant> toEntityList() {
+        String apiVersion = this.getApiVersion();
+        String listTotalCount = this.getListTotalCount();
+        ResultElement resultElement = this.getResultElement();
+
+        //row 배열
+        List<RawRestaurant> list = new ArrayList<>();
+        for (int idx = 0; idx < this.getRowElements().size(); idx++) {
+            RowData rowData = this.getRowElements().get(idx);
+            //when
+            RawRestaurant rawRestaurant = RawRestaurant.builder()
+                    .listTotalCount(listTotalCount)
+                    .code(resultElement.getCODE())
+                    .message(resultElement.getMESSAGE())
+                    .apiVersion(apiVersion)
+                    .sigunName(rowData.getSigunName())
+                    .sigunCode(rowData.getSigunCode())
+                    .businessPlaceName(rowData.getBusinessPlaceName())
+                    .licenseDate(rowData.getLicenseDate())
+                    .businessStateName(rowData.getBusinessStateName())
+                    .closeDate(rowData.getCloseDate())
+                    .locationArea(rowData.getLocationArea())
+                    .waterFacilityTypeName(rowData.getWaterFacilityTypeName())
+                    .maleEmployeeCount(rowData.getMaleEmployeeCount())
+                    .year(rowData.getYear())
+                    .multiUseBusinessEstablishment(rowData.getMultiUseBusinessEstablishment())
+                    .gradeDivisionName(rowData.getGradeDivisionName())
+                    .totalFacilityScale(rowData.getTotalFacilityScale())
+                    .femaleEmployeeCount(rowData.getFemaleEmployeeCount())
+                    .businessSiteCircumferenceTypeName(rowData.getBusinessSiteCircumferenceTypeName())
+                    .sanitationIndustryType(rowData.getSanitationIndustryType())
+                    .sanitationBusinessCondition(rowData.getSanitationBusinessCondition())
+                    .totalEmployeeCount(rowData.getTotalEmployeeCount())
+                    .roadAddress(rowData.getRoadAddress())
+                    .lotNumberAddress(rowData.getLotNumberAddress())
+                    .zipCode(rowData.getZipCode())
+                    .latitude(rowData.getLatitude())
+                    .longitude(rowData.getLongitude())
+                    .build();
+            list.add(rawRestaurant);
+        }
+        return list;
+    }
+
 }
