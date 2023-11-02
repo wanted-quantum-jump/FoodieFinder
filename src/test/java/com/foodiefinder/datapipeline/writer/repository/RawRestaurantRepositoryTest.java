@@ -13,8 +13,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 @DisplayName("단위 테스트 - RawRestaurantRepository")
 class RawRestaurantRepositoryTest {
 
-    //TODO: null 조건에 대한 단위테스트 추가
-
     @Autowired
     RawRestaurantRepository rawRestaurantRepository;
 
