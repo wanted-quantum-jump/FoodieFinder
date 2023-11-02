@@ -13,8 +13,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 @DisplayName("단위 테스트 - RawRestaurantRepository")
 class RawRestaurantRepositoryTest {
 
-    //TODO: null 조건에 대한 단위테스트 추가
-
     @Autowired
     RawRestaurantRepository rawRestaurantRepository;
 
@@ -28,9 +26,9 @@ class RawRestaurantRepositoryTest {
                 .sanitationBusinessCondition("카페")
                 .roadAddress("경기도 화성시 반월동 869 (111호)")
                 .lotNumberAddress("경기도 화성시 영통로 59")
-                .zipCode(12345)
-                .latitude(37.12345)
-                .longitude(127.12345)
+                .zipCode("12345")
+                .latitude("37.12345")
+                .longitude("127.12345")
                 .build();
 
         //when
@@ -55,9 +53,9 @@ class RawRestaurantRepositoryTest {
                 .sanitationBusinessCondition("카페")
                 .roadAddress(SAME_ROADADDR) //same
                 .lotNumberAddress("경기도 화성시 영통로 59")
-                .zipCode(12345)
-                .latitude(37.12345)
-                .longitude(127.12345)
+                .zipCode("12345")
+                .latitude("37.12345")
+                .longitude("127.12345")
                 .build();
 
         RawRestaurant restaurant2 = RawRestaurant.builder()
@@ -67,9 +65,9 @@ class RawRestaurantRepositoryTest {
                 .sanitationBusinessCondition("카페")
                 .roadAddress(SAME_ROADADDR) //same
                 .lotNumberAddress("경기도 화성시 영통로 59")
-                .zipCode(12345)
-                .latitude(37.12345)
-                .longitude(127.12345)
+                .zipCode("12345")
+                .latitude("37.12345")
+                .longitude("127.12345")
                 .build();
 
         rawRestaurantRepository.save(restaurant1);
@@ -91,9 +89,9 @@ class RawRestaurantRepositoryTest {
                 .sanitationBusinessCondition("카페")
                 .roadAddress("경기도 화성시 어딘가") // diff
                 .lotNumberAddress("경기도 화성시 영통로 59")
-                .zipCode(12345)
-                .latitude(37.12345)
-                .longitude(127.12345)
+                .zipCode("12345")
+                .latitude("37.12345")
+                .longitude("127.12345")
                 .build();
 
         RawRestaurant restaurant2 = RawRestaurant.builder()
@@ -103,9 +101,9 @@ class RawRestaurantRepositoryTest {
                 .sanitationBusinessCondition("카페")
                 .roadAddress("경기도 화성시 반월동 869 (111호)") // diff
                 .lotNumberAddress("경기도 화성시 영통로 59")
-                .zipCode(12345)
-                .latitude(37.12345)
-                .longitude(127.12345)
+                .zipCode("12345")
+                .latitude("37.12345")
+                .longitude("127.12345")
                 .build();
 
         rawRestaurantRepository.save(restaurant1);
@@ -127,9 +125,9 @@ class RawRestaurantRepositoryTest {
                 .sanitationBusinessCondition("카페")
                 .roadAddress(SAME_ROADADDR) // same
                 .lotNumberAddress("경기도 화성시 영통로 59")
-                .zipCode(12345)
-                .latitude(37.12345)
-                .longitude(127.12345)
+                .zipCode("12345")
+                .latitude("37.12345")
+                .longitude("127.12345")
                 .build();
 
         RawRestaurant restaurant2 = RawRestaurant.builder()
@@ -139,9 +137,9 @@ class RawRestaurantRepositoryTest {
                 .sanitationBusinessCondition("카페")
                 .roadAddress(SAME_ROADADDR) // same
                 .lotNumberAddress("경기도 화성시 영통로 59")
-                .zipCode(12345)
-                .latitude(37.12345)
-                .longitude(127.12345)
+                .zipCode("12345")
+                .latitude("37.12345")
+                .longitude("127.12345")
                 .build();
 
         rawRestaurantRepository.save(restaurant1);

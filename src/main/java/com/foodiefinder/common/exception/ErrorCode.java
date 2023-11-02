@@ -11,6 +11,8 @@ public enum ErrorCode {
     //User
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "U001", "이미 계정이 존재합니다."),
 
+    //Processor
+    UNPARSEABLE_DATA(HttpStatus.BAD_REQUEST, "P001", "파싱할 수 없는 Json 형식입니다."),
     //CSV
     NOT_VALID_CSV(HttpStatus.NOT_IMPLEMENTED,"C001" ,"유효하지 않은 형식의 CSV입니다." ),
     CSV_FILE_EXCEPTION(HttpStatus.NOT_IMPLEMENTED,"C002" ,"CSV 파일을 읽어올 수 없습니다." ),
