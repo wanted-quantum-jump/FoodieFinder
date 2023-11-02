@@ -13,8 +13,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RootData {
-    //todo: 접근제어자 수정
-    @JsonProperty("Genrestrtcate")
+
+    @JsonAlias({
+            "Genrestrtlunch",
+            "Genrestrtcate",
+            "Genrestrtmovmntcook",
+            "Genrestrtchifood",
+            "Genrestrtjpnfood",
+            "Genrestrtsoup",
+            "Genrestrtfastfood",
+            "Genrestrtsash",
+            "Genrestrtbuff",
+            "Genrestrtfugu",
+            "Genrestrtstandpub",
+            "Genrestrttratearm",
+            "Genrestrtbsrpcook"
+    })
     public List<DataElement> dataElements;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
