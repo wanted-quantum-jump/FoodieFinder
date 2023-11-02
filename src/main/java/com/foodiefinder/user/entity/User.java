@@ -33,7 +33,7 @@ public class User extends BaseTimeEntity {
     private boolean lunchRecommendationEnabled;
 
     @Builder
-    public User(String account, String email, String password) {
+    public User(String account, String password) {
         this.account = account;
         this.password = password;
     }

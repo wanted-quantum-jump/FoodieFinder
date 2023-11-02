@@ -25,7 +25,7 @@ public class UserController {
 
         Long userId = userService.saveUser(request);
 
-        return ResponseEntity.created(URI.create("/api/users/signup" + userId)).build();
+        return ResponseEntity.created(URI.create("/api/users/signup/" + userId)).build();
     }
 }
 
