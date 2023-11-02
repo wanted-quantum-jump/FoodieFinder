@@ -17,10 +17,9 @@ public class RootData {
     @JsonProperty("Genrestrtcate")
     public List<DataElement> dataElements;
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     public static RootData of(String jsonString) {
         try {
-            // ObjectMapper 생성
-            ObjectMapper objectMapper = new ObjectMapper();
             // 원본 JSON 데이터를 RootData 객체로 변환
             return objectMapper.readValue(jsonString, RootData.class);
         } catch (JsonProcessingException e) {
