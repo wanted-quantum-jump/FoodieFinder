@@ -23,8 +23,8 @@ public class RawRestaurantWriter implements ItemWriter<List<RawRestaurant>> {
         saveAll(restaurantList);
     }
 
-    @Transactional
-    List<RawRestaurant> saveAll(List<RawRestaurant> restaurantList) {
+
+    private List<RawRestaurant> saveAll(List<RawRestaurant> restaurantList) {
         List<RawRestaurant> savedResult = new ArrayList<>();
         for (RawRestaurant rawRestaurant : restaurantList) {
             if (save(rawRestaurant) == null)

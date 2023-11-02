@@ -144,8 +144,7 @@ class RawRestaurantWriterTest {
         when(rawRestaurantRepository.save(raw2)).thenThrow(DataIntegrityViolationException.class); // 중복 저장시 예외
 
         //when
-        List<RawRestaurant> savedRestaurants = rawRestaurantWriter.saveAll(restaurantList);
-
+        List<RawRestaurant> savedRestaurants = ReflectionTestUtils.invokeMethod(rawRestaurantWriter, "saveAll", restaurantList);
         //then
         verify(rawRestaurantRepository, times(2)).save(any()); // 저장 메서드가 2번 호출되어야 함
         assertThat(savedRestaurants.get(0)).isEqualTo(raw1); // 저장된 레스토랑은 raw1과 같아야 함
