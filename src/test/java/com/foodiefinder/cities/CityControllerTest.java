@@ -1,12 +1,12 @@
-package com.foodiefinder.restaurant;
+package com.foodiefinder.cities;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.foodiefinder.common.dto.ResponseDto;
-import com.foodiefinder.restaurant.controller.CityController;
-import com.foodiefinder.restaurant.service.CityService;
+import com.foodiefinder.cities.controller.CityController;
+import com.foodiefinder.cities.service.CityService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
