@@ -4,7 +4,7 @@ import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.RawRestaurant;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  * RawRestaurant list -> Restaurant list로 가공
  * @see RawRestaurantProcessor
  */
-@Slf4j
+@Component
 public class RestaurantProcessor implements ItemProcessor<List<RawRestaurant>, List<Restaurant>> {
 
     /**
