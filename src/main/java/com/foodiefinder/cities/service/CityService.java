@@ -1,4 +1,4 @@
-package com.foodiefinder.restaurant.service;
+package com.foodiefinder.cities.service;
 
 import com.foodiefinder.common.dto.ResponseDto;
 import com.foodiefinder.datapipeline.writer.entity.Sgg;

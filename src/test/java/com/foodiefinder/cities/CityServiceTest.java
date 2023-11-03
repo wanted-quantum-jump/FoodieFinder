@@ -1,4 +1,4 @@
-package com.foodiefinder.restaurant;
+package com.foodiefinder.cities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 import com.foodiefinder.common.dto.ResponseDto;
 import com.foodiefinder.datapipeline.writer.entity.Sgg;
 import com.foodiefinder.datapipeline.writer.repository.SggRepository;
-import com.foodiefinder.restaurant.service.CityService;
+import com.foodiefinder.cities.service.CityService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
