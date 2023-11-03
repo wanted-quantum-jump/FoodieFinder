@@ -1,7 +1,7 @@
-package com.foodiefinder.restaurants.controller;
+package com.foodiefinder.restaurant.controller;
 
 import com.foodiefinder.common.dto.ResponseDto;
-import com.foodiefinder.restaurants.service.RestaurantsService;
+import com.foodiefinder.restaurant.service.RestaurantsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
