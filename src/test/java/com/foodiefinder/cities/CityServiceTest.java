@@ -1,58 +1,75 @@
 package com.foodiefinder.cities;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import com.foodiefinder.common.dto.ResponseDto;
+import com.foodiefinder.cities.controller.response.CitesResponse;
+import com.foodiefinder.cities.controller.response.CitesResponses;
+import com.foodiefinder.cities.factory.SggListFactory;
+import com.foodiefinder.cities.service.CityService;
+import com.foodiefinder.common.dto.Response;
+import com.foodiefinder.common.exception.CustomException;
+import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.Sgg;
 import com.foodiefinder.datapipeline.writer.repository.SggRepository;
-import com.foodiefinder.cities.service.CityService;
-import java.util.Arrays;
+import java.util.ArrayList;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {CityService.class, SggListFactory.class})
 public class CityServiceTest {
-    @Mock
+
+    @MockBean
     private SggRepository sggRepository;
 
-    @InjectMocks
-    private CityService sggService;
+    @Autowired
+    private CityService cityService;
 
     @Test
-    public void 시군구_목록을_가져온다() {
-        // Arrange
-        Sgg sgg1 = new Sgg("dosi1", "sgg1", 10.0, 20.0);
-        Sgg sgg2 = new Sgg("dosi2", "sgg2", 30.0, 40.0);
-        List<Sgg> getCities = Arrays.asList(sgg1, sgg2);
+    public void 도시가_없을_때_빈_목록을_반환한다() {
+        // Given
+        when(sggRepository.findAll()).thenReturn(Collections.emptyList());
 
-        ResponseDto responseDto1 = new ResponseDto(sgg1);
-        ResponseDto responseDto2 = new ResponseDto(sgg2);
-        List<ResponseDto> expectedResponse = Arrays.asList(responseDto1, responseDto2);
+        // When & Then
+        CustomException exception = assertThrows(CustomException.class, cityService::getCities);
+        assertEquals(ErrorCode.CITIES_DATA_NOT_FOUND, exception.getErrorCode());
 
-        when(sggRepository.findAll()).thenReturn(getCities);
-
-        // Act
-        List<ResponseDto> actualResponse = sggService.getCities();
-
-        // Assert
-        assertEquals(expectedResponse, actualResponse);
+       //Verify
+        verify(sggRepository).findAll();
     }
-
     @Test
-    public void 시군구_데이터가_비어있을때_NULL_을_반환해야한다() {
-        // Arrange
-        when(sggRepository.findAll()).thenReturn(null);
-        List<ResponseDto> expectedResponse = Collections.emptyList();
+    public void 도시가있으면_목록을반환한다() {
 
-        // Act
-        List<ResponseDto> actualResponse = sggService.getCities();
+        List<Sgg> mockCities = new ArrayList<>();
+        mockCities.add(Sgg.builder().dosi("Dosi1").sgg("Sgg1").lon(127.001).lat(37.001).build());
+        mockCities.add(Sgg.builder().dosi("Dosi2").sgg("Sgg2").lon(128.002).lat(38.002).build());
 
-        // Assert
-        assertEquals(expectedResponse, actualResponse);
+        when(sggRepository.findAll()).thenReturn(mockCities);
+
+        Response<CitesResponses> response = cityService.getCities();
+
+        assertNotNull(response);
+        assertFalse(response.getData().getCitesResponses().isEmpty());
+        assertEquals(mockCities.size(), response.getData().getCitesResponses().size());
+
+        List<CitesResponse> actualCites = response.getData().getCitesResponses();
+        for (int i = 0; i < mockCities.size(); i++) {
+            Sgg expected = mockCities.get(i);
+            CitesResponse actual = actualCites.get(i);
+            assertEquals(expected.getDosi(), actual.getDosi());
+            assertEquals(expected.getSgg(), actual.getSgg());
+            assertEquals(expected.getLon(), actual.getLon());
+            assertEquals(expected.getLat(), actual.getLat());
+        }
+
+        verify(sggRepository).findAll();
     }
 }
