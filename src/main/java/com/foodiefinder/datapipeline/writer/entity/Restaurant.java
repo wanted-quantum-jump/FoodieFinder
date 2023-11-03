@@ -89,7 +89,7 @@ public class Restaurant extends BaseTimeEntity {
     // == 빌더 == //
 
     @Builder
-    public Restaurant(String sigunName, String businessPlaceName, String businessStateName, String sanitationBusinessCondition, String roadAddress, String lotNumberAddress, Integer zipCode, Double latitude, Double longitude) {
+    public Restaurant(String sigunName, String businessPlaceName, String businessStateName, String sanitationBusinessCondition, String roadAddress, String lotNumberAddress, Integer zipCode, Double latitude, Double longitude, Integer averageRating) {
         this.sigunName = sigunName;
         this.businessPlaceName = businessPlaceName;
         this.businessStateName = businessStateName;
@@ -99,5 +99,7 @@ public class Restaurant extends BaseTimeEntity {
         this.zipCode = zipCode;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.averageRating = averageRating;
+
     }
 }
