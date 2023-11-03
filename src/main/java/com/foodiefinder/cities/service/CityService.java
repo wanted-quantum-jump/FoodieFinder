@@ -32,7 +32,14 @@ public class CityService {
     }
 
     private List<Sgg> getRawCities() {
-        return Optional.of(sggRepository.findAll())
-                .orElseThrow(() -> new CustomException(ErrorCode.CITIES_DATA_NOT_FOUND));
+        List<Sgg> cities = sggRepository.findAll();
+        ensureNonEmptyList(cities);
+        return cities;
+    }
+
+    private void ensureNonEmptyList(List<Sgg> cities) {
+        if (cities.isEmpty()) {
+            throw new CustomException(ErrorCode.CITIES_DATA_NOT_FOUND);
+        }
     }
 }
