@@ -1,7 +1,9 @@
-package com.foodiefinder.restaurant.service;
+package com.foodiefinder.restaurants.service;
 
 
 import com.foodiefinder.common.dto.ResponseDto;
+import com.foodiefinder.common.exception.CustomException;
+import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
 import java.util.Comparator;
@@ -27,7 +29,15 @@ public class RestaurantsService {
                 .sorted(getComparator(orderBy, latitude, longitude))
                 .collect(Collectors.toList());
 
+        ensureRestaurantsFound(restaurantsWithinRange);
+
         return new ResponseDto(restaurantsWithinRange);
+    }
+
+    private void ensureRestaurantsFound(List<Restaurant> restaurants) {
+        if (restaurants.isEmpty()) {
+            throw new CustomException(ErrorCode.NO_RESTAURANTS_IN_RANGE);
+        }
     }
 
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
