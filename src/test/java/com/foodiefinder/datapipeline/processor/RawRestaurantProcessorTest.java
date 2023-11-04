@@ -112,7 +112,7 @@ class RawRestaurantProcessorTest {
     }
 
     @Test
-    @DisplayName("json 내의 row 헤드 읽기 - version")
+    @DisplayName("json 내의 헤드 읽기 - version")
     void processHeadForVersion() throws JsonProcessingException {
 
         RootData rootData = RootData.of(jsonString);
@@ -124,7 +124,7 @@ class RawRestaurantProcessorTest {
     }
 
     @Test
-    @DisplayName("json 내의 row 헤드 읽기 - listTotalCount")
+    @DisplayName("json 내의 헤드 읽기 - listTotalCount")
     void processHeadForListTotalCount() throws JsonProcessingException {
 
         RootData rootData = RootData.of(jsonString);
@@ -136,7 +136,7 @@ class RawRestaurantProcessorTest {
     }
 
     @Test
-    @DisplayName("json 내의 row 헤드 읽기 - ResultElement")
+    @DisplayName("json 내의 헤드 읽기 - ResultElement")
     void processHeadForListResultElement() throws JsonProcessingException {
 
         RootData rootData = RootData.of(jsonString);
