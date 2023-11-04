@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /***
- * RestaurantProcessor에서 전처리한 List<Restaurant> list를  Restaurant에 저장
+ * RestaurantProcessor에서 전처리한 List<Restaurant> list를  DB에 저장
+ * {@link RestaurantWriter#write(List)}
  */
 @Component
 @RequiredArgsConstructor
@@ -20,6 +21,11 @@ public class RestaurantWriter implements ItemWriter<List<Restaurant>> {
 
     private final RestaurantRepository restaurantRepository;
 
+    /**
+     * DB에 restaurantList를 저장합니다.
+     * @param restaurantList RestaurantProcessor에서 전처리한 데이터
+     * @see com.foodiefinder.datapipeline.processor.RestaurantProcessor
+     */
     @Override
     @Transactional
     public void write(List<Restaurant> restaurantList) {
