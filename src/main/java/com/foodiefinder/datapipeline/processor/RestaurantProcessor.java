@@ -4,6 +4,7 @@ import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.RawRestaurant;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
  * RawRestaurant list -> Restaurant list로 가공
  * @see RawRestaurantProcessor
  */
+@Slf4j
 @Component
 public class RestaurantProcessor implements ItemProcessor<List<RawRestaurant>, List<Restaurant>> {
 
@@ -30,13 +32,16 @@ public class RestaurantProcessor implements ItemProcessor<List<RawRestaurant>, L
         for (RawRestaurant raw : rawRestaurantList) {
             try {
                 Restaurant restaurant = convertToRestaurant(raw);
-                result.add(restaurant);
+                if (restaurant != null) {
+                    result.add(restaurant);
+                }
             } catch (CustomException e) {
                 // CustomException 발생하면 무시하고 해당 식당 정보는 저장하지 않음
             }
         }
         return result;
     }
+
 
     /**
      * RawRestaurant를 Restaurant로 변환합니다. <br>
@@ -47,11 +52,15 @@ public class RestaurantProcessor implements ItemProcessor<List<RawRestaurant>, L
      * @return
      */
     private static Restaurant convertToRestaurant(final RawRestaurant raw) {
+        //영업상태 == 폐업이거나 폐업 날짜 있으면 저장 X
+        if (raw.getBusinessStateName() == BUSINESS_STATE_CLOSE || isCloseDateExist(raw.getCloseDate()))
+            return null;
+
         try {
             Restaurant restaurant = Restaurant
                     .builder()
                     .sigunName(raw.getSigunName().trim())
-                    .businessStateName(isCloseDateExist(raw.getCloseDate()) ? BUSINESS_STATE_CLOSE : raw.getBusinessStateName().trim()) // 폐업날짜 있으면 "영업" 상태여도 폐업처리
+                    .businessStateName(raw.getBusinessStateName().trim())
                     .businessPlaceName(raw.getBusinessPlaceName().trim())
                     .sanitationBusinessCondition(raw.getSanitationBusinessCondition().trim())
                     .roadAddress(raw.getRoadAddress().trim())
