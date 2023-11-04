@@ -16,6 +16,8 @@ import java.util.List;
 @Component
 public class RestaurantProcessor implements ItemProcessor<List<RawRestaurant>, List<Restaurant>> {
 
+    private static final String BUSINESS_STATE_CLOSE = "폐업";
+
     /**
      * @param rawRestaurantList RawRestaurantProcessor에서 전처리한 데이터
      * @return DB에 저장할 수 있게 가공된 Restaurant list
@@ -49,7 +51,7 @@ public class RestaurantProcessor implements ItemProcessor<List<RawRestaurant>, L
             Restaurant restaurant = Restaurant
                     .builder()
                     .sigunName(raw.getSigunName().trim())
-                    .businessStateName(raw.getBusinessStateName().trim())
+                    .businessStateName(isCloseDateExist(raw.getCloseDate()) ? BUSINESS_STATE_CLOSE : raw.getBusinessStateName().trim()) // 폐업날짜 있으면 "영업" 상태여도 폐업처리
                     .businessPlaceName(raw.getBusinessPlaceName().trim())
                     .sanitationBusinessCondition(raw.getSanitationBusinessCondition().trim())
                     .roadAddress(raw.getRoadAddress().trim())
@@ -66,6 +68,10 @@ public class RestaurantProcessor implements ItemProcessor<List<RawRestaurant>, L
             // zipCode, latitude, longitude에 숫자가 아닌 값이 들어온 경우
             throw new CustomException(ErrorCode.WRONG_NUMBER_FORMAT);
         }
+    }
+
+    private static boolean isCloseDateExist(String closeDate) {
+        return closeDate.isEmpty() || closeDate.isBlank();
     }
 
 }
