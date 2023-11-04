@@ -2,42 +2,33 @@ package com.foodiefinder.datapipeline.config;
 
 import com.foodiefinder.datapipeline.job.OpenApiJob;
 import lombok.RequiredArgsConstructor;
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.springframework.context.ApplicationContext;
+import org.quartz.*;
+import org.quartz.impl.matchers.KeyMatcher;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-import org.springframework.scheduling.quartz.SpringBeanJobFactory;
-
-import javax.sql.DataSource;
 
 @Configuration
 @RequiredArgsConstructor
 public class QuartzConfig {
-
-    private final ApplicationContext applicationContext;
-
-    @Bean
-    public SpringBeanJobFactory springBeanJobFactory() {
-        SpringBeanJobFactory jobFactory = new SpringBeanJobFactory();
-        jobFactory.setApplicationContext(applicationContext);
-        return jobFactory;
-    }
-
-    @Bean
+    @Bean("openApiJobDetailBean")
     public JobDetailFactoryBean jobDetailFactoryBean() {
         JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
         factoryBean.setJobClass(OpenApiJob.class);
         factoryBean.setDurability(true);
         factoryBean.setRequestsRecovery(true);
+        factoryBean.setJobDataAsMap(new JobDataMap());
+        factoryBean.setName("openApiJob");
+        factoryBean.setGroup("openApiJobGroup");
         return factoryBean;
     }
 
-    @Bean
-    public Trigger cronTrigger(JobDetail jobDetail) {
+    @Bean("openApiCronTriggerBean")
+    public Trigger cronTrigger(
+            @Qualifier("openApiJobDetailBean")
+            JobDetail jobDetail) {
         return TriggerBuilder.newTrigger()
                 .forJob(jobDetail)
                 // 현재는 테스트로 인해 실행시 한번만 동작되도록 주석 설정
@@ -46,18 +37,28 @@ public class QuartzConfig {
     }
 
     @Bean
-    public SchedulerFactoryBean schedulerFactoryBean(
+    public Scheduler scheduler(
+            @Qualifier("openApiJobDetailBean")
             JobDetail jobDetail,
+            @Qualifier("openApiCronTriggerBean")
             Trigger trigger,
-            SpringBeanJobFactory springBeanJobFactory,
-            DataSource dataSource
-    ) {
-        SchedulerFactoryBean factoryBean = new SchedulerFactoryBean();
-        factoryBean.setJobDetails(jobDetail);
-        factoryBean.setTriggers(trigger);
-        factoryBean.setJobFactory(springBeanJobFactory);
-        factoryBean.setDataSource(dataSource);
+            JobListener openApiJobListener,
+            SchedulerFactoryBean schedulerFactoryBean
+    ) throws Exception {
+        Scheduler scheduler = schedulerFactoryBean.getScheduler();
 
-        return factoryBean;
+        if (!scheduler.checkExists(jobDetail.getKey())) {
+            scheduler.scheduleJob(jobDetail, trigger);
+        } else {
+            scheduler.addJob(jobDetail, true, true);
+            if (!scheduler.checkExists(trigger.getKey())) {
+                scheduler.scheduleJob(trigger);
+            }
+        }
+        scheduler.getListenerManager().addJobListener(
+                openApiJobListener,KeyMatcher.keyEquals(new JobKey("openApiJob","openApiJobGroup"))
+        );
+
+        return scheduler;
     }
 }
