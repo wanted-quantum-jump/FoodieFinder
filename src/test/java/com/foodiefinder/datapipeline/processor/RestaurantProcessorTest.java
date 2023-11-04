@@ -177,5 +177,63 @@ class RestaurantProcessorTest {
 
     }
 
+    @Test
+    @DisplayName("isCloseDateExist 테스트 - closeDate 공백")
+    void isCloseDateExist() {
+        String closeDate = "   ";
+        Boolean result = ReflectionTestUtils.invokeMethod(RestaurantProcessor.class, "isCloseDateExist", closeDate);
+        Assertions.assertThat(result).isEqualTo(false);
+    }
 
+    @Test
+    @DisplayName("isCloseDateExist 테스트 - closeDate null")
+    void isCloseDateExist_null() {
+        String closeDate = null;
+        Boolean result = ReflectionTestUtils.invokeMethod(RestaurantProcessor.class, "isCloseDateExist", closeDate);
+        Assertions.assertThat(result).isEqualTo(false);
+    }
+
+
+    @Test
+    @DisplayName("영업상태 - 영업이고 폐업 날짜 없으면 '영업")
+    void business_state_open() {
+
+        //given
+        RawRestaurant raw = RootData.of(jsonString).toEntityList().get(0);
+        ReflectionTestUtils.setField(raw, "businessStateName", "영업"); // 영업상태 "영업"이더라도
+        ReflectionTestUtils.setField(raw, "closeDate", ""); // 폐업 날짜 있으면 "폐업" 으로 처리해야함
+
+        //than
+        Restaurant result = ReflectionTestUtils.invokeMethod(RestaurantProcessor.class, "convertToRestaurant", raw);
+        Assertions.assertThat(result.getBusinessStateName()).isEqualTo("영업");
+    }
+
+    @Test
+    @DisplayName("영업상태 - 영업이지만, 폐업날짜 있으면 영업상태를 영업 ->폐업 으로 변경")
+    void closeDate() {
+
+        //given
+        RawRestaurant raw = RootData.of(jsonString).toEntityList().get(0);
+        ReflectionTestUtils.setField(raw, "businessStateName", "영업"); // 영업상태 "영업"이더라도
+        ReflectionTestUtils.setField(raw, "closeDate", "2023-11-04"); // 폐업 날짜 있으면 "폐업" 으로 처리해야함
+
+        //than
+        Restaurant result = ReflectionTestUtils.invokeMethod(RestaurantProcessor.class, "convertToRestaurant", raw);
+        Assertions.assertThat(result.getBusinessStateName()).isEqualTo("폐업");
+    }
+
+
+    @Test
+    @DisplayName("영업 상태 - 폐업인데 폐업날짜 없으면 '폐업' 유지")
+    void closeDate_Empty() {
+
+        //given
+        RawRestaurant raw = RootData.of(jsonString).toEntityList().get(0);
+        ReflectionTestUtils.setField(raw, "businessStateName", "폐업"); // 영업상태 "폐업"일때
+        ReflectionTestUtils.setField(raw, "closeDate", ""); // 폐업 날짜 없으면 그대로 유지 (영업으로 변경하지 않음)
+
+        //than
+        Restaurant result = ReflectionTestUtils.invokeMethod(RestaurantProcessor.class, "convertToRestaurant", raw);
+        Assertions.assertThat(result.getBusinessStateName()).isEqualTo("폐업");
+    }
 }
