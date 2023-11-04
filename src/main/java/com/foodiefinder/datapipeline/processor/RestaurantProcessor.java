@@ -71,7 +71,7 @@ public class RestaurantProcessor implements ItemProcessor<List<RawRestaurant>, L
     }
 
     private static boolean isCloseDateExist(String closeDate) {
-        return closeDate.isEmpty() || closeDate.isBlank();
+        return !(closeDate == null || closeDate.isBlank());
     }
 
 }
