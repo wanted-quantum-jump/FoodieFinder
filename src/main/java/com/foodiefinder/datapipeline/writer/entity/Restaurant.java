@@ -1,7 +1,10 @@
 package com.foodiefinder.datapipeline.writer.entity;
 
 import com.foodiefinder.common.entity.BaseTimeEntity;
+import com.foodiefinder.restaurants.entity.Rating;
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -85,6 +88,8 @@ public class Restaurant extends BaseTimeEntity {
      * 해당 맛집의 평균 평점, 평점이 하나도 없는 경우 null
      */
     private Integer averageRating;
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Rating> ratings = new ArrayList<>();
 
     // == 빌더 == //
 
@@ -101,5 +106,9 @@ public class Restaurant extends BaseTimeEntity {
         this.longitude = longitude;
         this.averageRating = averageRating;
 
+    }
+
+    public void addRating(int average) {
+        this.averageRating = average;
     }
 }
