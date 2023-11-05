@@ -1,16 +1,13 @@
 package com.foodiefinder.datapipeline.reader;
 
 import com.foodiefinder.datapipeline.enums.JobState;
-import com.foodiefinder.datapipeline.job.StateHandler;
+import com.foodiefinder.datapipeline.observer.StateHandler;
 
 import java.util.Map;
 import java.util.Optional;
 
 public  abstract class AbstractPagingItemReader<I> implements ItemReader<I> {
-    // 한번에 받아올 페이지 사이즈 설정
-
-    // 현재  페이지 넘버
-    private Map<String, String> params; // 사용할 파라미터
+    private Map<String, String> params;
     private String pageSizeName;
     private int pageSize = 100;
     private String pageName;
