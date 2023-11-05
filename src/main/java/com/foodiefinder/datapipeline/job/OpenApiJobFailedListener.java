@@ -1,7 +1,6 @@
 package com.foodiefinder.datapipeline.job;
 
 import com.foodiefinder.datapipeline.enums.JobState;
-import com.foodiefinder.datapipeline.observer.JobStateHandler;
 import lombok.RequiredArgsConstructor;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

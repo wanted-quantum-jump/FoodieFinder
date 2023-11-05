@@ -1,7 +1,7 @@
 package com.foodiefinder.datapipeline.reader;
 
 import com.foodiefinder.datapipeline.enums.JobState;
-import com.foodiefinder.datapipeline.observer.StateHandler;
+import com.foodiefinder.datapipeline.job.StateHandler;
 
 import java.util.Map;
 import java.util.Optional;
@@ -52,7 +52,6 @@ public  abstract class AbstractPagingItemReader<I> implements ItemReader<I> {
 
     @Override
     public void update() {
-        // 완료되었을때 다음 시작 위치 저장.
         stateHandler.saveState("currentPageIndex", currentPageIndex);
         stateHandler.saveState(JobState.RETRY.name(), false);
     }
