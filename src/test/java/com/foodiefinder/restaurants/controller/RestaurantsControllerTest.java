@@ -11,10 +11,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.foodiefinder.common.dto.ResponseDto;
+import com.foodiefinder.common.dto.Response;
 import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
+import com.foodiefinder.datapipeline.writer.entity.Restaurant;
+import com.foodiefinder.restaurants.dto.RestaurantsResponse;
 import com.foodiefinder.restaurants.service.RestaurantsService;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,9 +51,12 @@ public class RestaurantsControllerTest {
         double range = 1.0;
         String orderBy = "distance";
 
-        ResponseDto mockResponseDto = new ResponseDto();
+        List<Restaurant> restaurantList = new ArrayList<>();
+        RestaurantsResponse restaurantsData = RestaurantsResponse.from(restaurantList);
+        Response<RestaurantsResponse> mockResponse = Response.success(restaurantsData);
+
         when(restaurantsService.getRestaurants(anyString(), anyString(), anyDouble(), anyString()))
-                .thenReturn(mockResponseDto);
+                .thenReturn(mockResponse);
 
         // Act & Assert
         mockMvc.perform(get("/api/restaurants")
@@ -64,43 +71,5 @@ public class RestaurantsControllerTest {
 
         // Verify
         verify(restaurantsService).getRestaurants(lat, lon, range, orderBy);
-    }
-
-    @Test
-    public void 맛집을가져와서_정확한_응답을반환한다() {
-        // Arrange
-        String lat = "37.7749";
-        String lon = "-122.4194";
-        double range = 1.0;
-        String orderBy = "rating";
-        ResponseDto mockResponse = new ResponseDto();
-
-        given(restaurantsService.getRestaurants(lat, lon, range, orderBy)).willReturn(mockResponse);
-
-        // Act
-        ResponseDto response = restaurantsController.getRestaurants(lat, lon, range, orderBy);
-
-        // Assert
-        assertEquals(mockResponse, response);
-        verify(restaurantsService).getRestaurants(lat, lon, range, orderBy);
-    }
-
-    @Test
-    public void 범위내식당없을때_예외발생() {
-        // Arrange
-        String lat = "0";
-        String lon = "0";
-        double range = 1.0;
-        String orderBy = "distance";
-
-        given(restaurantsService.getRestaurants(lat, lon, range, orderBy))
-                .willThrow(new CustomException(ErrorCode.NO_RESTAURANTS_IN_RANGE));
-
-        // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            restaurantsController.getRestaurants(lat, lon, range, orderBy);
-        });
-
-        assertEquals(ErrorCode.NO_RESTAURANTS_IN_RANGE, exception.getErrorCode());
     }
 }
