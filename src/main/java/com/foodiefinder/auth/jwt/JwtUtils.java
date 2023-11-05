@@ -1,6 +1,8 @@
 package com.foodiefinder.auth.jwt;
 
 
+import com.foodiefinder.common.exception.CustomException;
+import com.foodiefinder.common.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -38,8 +40,7 @@ public class JwtUtils {
             Date currentDate = new Date();
             return !expiredDate.before(currentDate);
         } catch (JwtException e) {
-            //todo JWT 검증 에러 처리
-            return false;
+            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
         }
     }
 }
