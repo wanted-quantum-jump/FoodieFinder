@@ -20,6 +20,8 @@ public enum ErrorCode {
 
     CITIES_DATA_NOT_FOUND(HttpStatus.NOT_IMPLEMENTED,"C004" , "시군구 데이터가 존재하지 않습니다."),
     NO_RESTAURANTS_IN_RANGE(HttpStatus.NOT_FOUND, "R002", "이 지역에는 맛집이 없습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U002", "해당하는 유저가 없습니다."),
+    RESTAURANT_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "해당하는 맛집이 없습니다."),
     ;
     private final HttpStatus httpStatus;
     private final String code;
