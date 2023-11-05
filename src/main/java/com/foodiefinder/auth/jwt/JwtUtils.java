@@ -18,14 +18,16 @@ public class JwtUtils {
     @Value("${jwt.secret.key}")
     private String secretKey;
 
-     public String generateToken(String account, Long expiredMs) {
+    private final static Long EXPIRED_MS = 60 * 60 * 1000L;
+
+     public String generateToken(String account) {
          Claims claims = Jwts.claims();
          claims.put("account", account);
 
          return Jwts.builder()
                  .setClaims(claims)
                  .setIssuedAt(new Date(System.currentTimeMillis()))
-                 .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
+                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRED_MS))
                  .signWith(SignatureAlgorithm.HS512, secretKey)
                  .compact();
      }
