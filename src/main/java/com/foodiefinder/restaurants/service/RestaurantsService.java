@@ -12,13 +12,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RestaurantsService {
     private static final double EARTH_RADIUS_KM = 6371.0;
     private static final String SORT_BY_RATING = "rating";
     private final RestaurantRepository restaurantRepository;
+
 
     public Response<RestaurantsResponse> getRestaurants(String lat, String lon, double range, String orderBy) {
         double latitude = Double.parseDouble(lat);
