@@ -1,11 +1,12 @@
 package com.foodiefinder.restaurants.service;
 
 
-import com.foodiefinder.common.dto.ResponseDto;
+import com.foodiefinder.common.dto.Response;
 import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
+import com.foodiefinder.restaurants.dto.RestaurantsResponse;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ public class RestaurantsService {
     private static final String SORT_BY_RATING = "rating";
     private final RestaurantRepository restaurantRepository;
 
-    public ResponseDto getRestaurants(String lat, String lon, double range, String orderBy) {
+    public Response<RestaurantsResponse> getRestaurants(String lat, String lon, double range, String orderBy) {
         double latitude = Double.parseDouble(lat);
         double longitude = Double.parseDouble(lon);
 
@@ -30,8 +31,9 @@ public class RestaurantsService {
                 .collect(Collectors.toList());
 
         ensureRestaurantsFound(restaurantsWithinRange);
+        RestaurantsResponse restaurantsDTO = RestaurantsResponse.from(restaurantsWithinRange);
 
-        return new ResponseDto(restaurantsWithinRange);
+        return Response.success(restaurantsDTO);
     }
 
     private void ensureRestaurantsFound(List<Restaurant> restaurants) {
