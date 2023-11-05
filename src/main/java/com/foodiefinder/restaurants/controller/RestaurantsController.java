@@ -1,6 +1,7 @@
 package com.foodiefinder.restaurants.controller;
 
-import com.foodiefinder.common.dto.ResponseDto;
+import com.foodiefinder.common.dto.Response;
+import com.foodiefinder.restaurants.dto.RestaurantsResponse;
 import com.foodiefinder.restaurants.service.RestaurantsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,7 @@ public class RestaurantsController {
     private final RestaurantsService restaurantsService;
 
     @GetMapping
-    public ResponseDto getRestaurants(
+    public Response<RestaurantsResponse> getRestaurants(
             @RequestParam(name = "lat", required = true) String lat
             , @RequestParam(name = "lon", required = true) String lon
             , @RequestParam(name = "range", defaultValue = "1.0") double range
