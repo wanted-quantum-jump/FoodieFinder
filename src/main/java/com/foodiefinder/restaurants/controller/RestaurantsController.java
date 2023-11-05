@@ -1,13 +1,11 @@
 package com.foodiefinder.restaurants.controller;
 
 import com.foodiefinder.common.dto.Response;
-import com.foodiefinder.restaurants.dto.RatingDto;
+import com.foodiefinder.restaurants.dto.RatingRequest;
 import com.foodiefinder.restaurants.dto.RestaurantsResponse;
 import com.foodiefinder.restaurants.service.RatingService;
 import com.foodiefinder.restaurants.service.RestaurantsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +30,7 @@ public class RestaurantsController {
         return this.restaurantsService.getRestaurants(lat, lon, range, orderBy);
     }
     @PostMapping("/{restaurantId}/ratings")
-    public Response<Void> createRating(@PathVariable Long restaurantId, @RequestBody RatingDto dto) {
+    public Response<Void> createRating(@PathVariable Long restaurantId, @RequestBody RatingRequest dto) {
         return this.ratingService.createRating(restaurantId, dto);
 
     }
