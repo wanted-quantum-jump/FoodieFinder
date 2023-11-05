@@ -3,10 +3,11 @@ package com.foodiefinder.restaurants.service;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.foodiefinder.common.dto.ResponseDto;
+import com.foodiefinder.common.dto.Response;
 import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
+import com.foodiefinder.restaurants.dto.RestaurantsResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -91,15 +92,18 @@ public class RestaurantsServiceTest {
 
         ).collect(Collectors.toList());
 
+        RestaurantsResponse restaurantsResponse = RestaurantsResponse.from(mockRestaurants);
+        Response<RestaurantsResponse> mockResponse = Response.success(restaurantsResponse);
+
         when(restaurantRepository.findAll()).thenReturn(mockRestaurants);
 
         // Act
-        ResponseDto response = restaurantsService.getRestaurants(lat, lon, range, orderBy);
+        Response<RestaurantsResponse> response = restaurantsService.getRestaurants(lat, lon, range, orderBy);
 
         // Assert
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertNotNull(response.getData());
-        assertEquals(mockRestaurants, response.getData());
+        assertEquals(restaurantsResponse, response.getData());
 
         // Verify
         verify(restaurantRepository).findAll();
