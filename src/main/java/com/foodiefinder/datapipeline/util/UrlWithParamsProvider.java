@@ -1,4 +1,4 @@
-package com.foodiefinder.datapipeline.provider;
+package com.foodiefinder.datapipeline.util;
 
 import org.springframework.web.util.UriComponentsBuilder;
 
