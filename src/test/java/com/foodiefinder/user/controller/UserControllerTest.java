@@ -1,11 +1,11 @@
 package com.foodiefinder.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.foodiefinder.auth.config.SecurityConfig;
 import com.foodiefinder.auth.filter.JwtAuthenticationFilter;
 import com.foodiefinder.auth.jwt.JwtUtils;
 import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
+import com.foodiefinder.user.dto.UserDetailResponse;
 import com.foodiefinder.user.dto.UserSignupRequest;
 import com.foodiefinder.user.repository.UserRepository;
 import com.foodiefinder.user.service.UserService;
@@ -26,7 +26,7 @@ import static org.springframework.http.MediaType.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = UserController.class,
         excludeFilters = {
@@ -93,9 +93,34 @@ class UserControllerTest {
         verify(userService).saveUser(any());
     }
 
+    @DisplayName("유저 상세 조회")
+    @WithMockUser
+    @Test
+    void userDetail() throws Exception {
 
+        UserDetailResponse response = UserDetailResponse.builder()
+                .id(1L)
+                .account("testAccount")
+                .latitude("123")
+                .longitude("456")
+                .lunchRecommendationEnabled(false)
+                .build();
 
+        given(userService.getUserDetail(1L)).willReturn(response);
 
+        mockMvc.perform(get("/api/users/1")
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.account").value("testAccount"))
+                .andExpect(jsonPath("$.latitude").value("123"))
+                .andExpect(jsonPath("$.longitude").value("456"))
+                .andExpect(jsonPath("$.lunchRecommendationEnabled").value("false"))
+                .andDo(print());
+
+        verify(userService, times(1)).getUserDetail(1L);
+
+    }
 
 
 }

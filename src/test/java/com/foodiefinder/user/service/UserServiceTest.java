@@ -3,10 +3,10 @@ package com.foodiefinder.user.service;
 import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.user.crypto.PasswordEncoder;
+import com.foodiefinder.user.dto.UserDetailResponse;
 import com.foodiefinder.user.dto.UserSignupRequest;
 import com.foodiefinder.user.entity.User;
 import com.foodiefinder.user.repository.UserRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -79,5 +79,30 @@ class UserServiceTest {
         verify(userRepository, times(0)).save(any(User.class));
 
     }
+
+    @DisplayName("회원 상세 조회")
+    @Test
+    void userDetail() throws Exception {
+
+        User user = User.builder()
+                .account("testAccount")
+                .password("123123qwe!!")
+                .build();
+
+        userRepository.save(user);
+
+        Long userId = user.getId();
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+
+        UserDetailResponse response = userService.getUserDetail(userId);
+
+        assertEquals(userId, response.getId());
+        assertEquals(user.getAccount(), response.getAccount());
+        assertEquals(user.getLatitude(), response.getLatitude());
+        assertEquals(user.getLongitude(), response.getLongitude());
+        assertEquals(user.isLunchRecommendationEnabled(), response.isLunchRecommendationEnabled());
+    }
+
 
 }
