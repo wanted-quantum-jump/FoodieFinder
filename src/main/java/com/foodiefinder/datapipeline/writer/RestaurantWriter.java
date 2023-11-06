@@ -3,7 +3,6 @@ package com.foodiefinder.datapipeline.writer;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,11 +41,13 @@ public class RestaurantWriter implements ItemWriter<List<Restaurant>> {
 
     @Transactional
     Restaurant save(Restaurant restaurant) {
-        try {
-            return restaurantRepository.save(restaurant);
-        } catch (DataIntegrityViolationException e) {
-            // 요구사항 : unique 제약조건 위반 시 저장하지 않고 무시
+
+        if (restaurantRepository.findByBusinessPlaceNameAndRoadAddress(restaurant.getBusinessPlaceName(), restaurant.getRoadAddress()) != null)
+        { // 요구사항 : unique 제약조건 위반 시 저장하지 않고 무시
+            return null;
         }
-        return null;
+
+        return restaurantRepository.save(restaurant);
+
     }
 }
