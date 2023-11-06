@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 public class RestaurantDetailResponse {
-    private long id;
     private String sigunName;
     private String businessPlaceName;
     private String businessStateName;
@@ -21,7 +20,6 @@ public class RestaurantDetailResponse {
     private List<RatingDto> ratings;
 
     public RestaurantDetailResponse(Restaurant restaurant) {
-        this.id = restaurant.getId();
         this.sigunName = restaurant.getSigunName();
         this.businessPlaceName = restaurant.getBusinessPlaceName();
         this.businessStateName = restaurant.getBusinessStateName();
