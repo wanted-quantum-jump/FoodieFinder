@@ -16,7 +16,6 @@ import java.util.List;
  */
 @Component
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class RestaurantWriter implements ItemWriter<List<Restaurant>> {
 
     private final RestaurantRepository restaurantRepository;
@@ -27,12 +26,10 @@ public class RestaurantWriter implements ItemWriter<List<Restaurant>> {
      * @see com.foodiefinder.datapipeline.processor.RestaurantProcessor
      */
     @Override
-    @Transactional
     public void write(List<Restaurant> restaurantList) {
         saveAll(restaurantList);
     }
 
-    @Transactional
     List<Restaurant> saveAll(List<Restaurant> restaurantList) {
         List<Restaurant> savedResult = new ArrayList<>();
         for (Restaurant restaurant : restaurantList) {
@@ -43,7 +40,8 @@ public class RestaurantWriter implements ItemWriter<List<Restaurant>> {
         return savedResult;
     }
 
-    private Restaurant save(Restaurant restaurant) {
+    @Transactional
+    Restaurant save(Restaurant restaurant) {
         try {
             return restaurantRepository.save(restaurant);
         } catch (DataIntegrityViolationException e) {
