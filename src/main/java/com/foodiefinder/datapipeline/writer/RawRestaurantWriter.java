@@ -23,27 +23,28 @@ public class RawRestaurantWriter implements ItemWriter<List<RawRestaurant>> {
 
     /**
      * restaurantList를 DB에 저장합니다.
-     * @param restaurantList
+     * @param rawRestaurantList
      */
     @Override
     @Transactional
-    public void write(List<RawRestaurant> restaurantList) {
-        saveAll(restaurantList);
+    public void write(List<RawRestaurant> rawRestaurantList) {
+        if (rawRestaurantList.size() <= 0)
+            return;
+        log.info("RawRestaurant-{} 데이터 저장 시작", rawRestaurantList.get(0).getSanitationBusinessCondition());
+        List<RawRestaurant> result = saveAll(rawRestaurantList);
+        log.info("RawRestaurant-{} 데이터 저장 종료 ({}개의 새로운 데이터가 저장되었고, {}개의 중복 데이터는 저장되지 않았습니다.)", rawRestaurantList.get(0).getSanitationBusinessCondition(), result.size(), rawRestaurantList.size() - result.size());
     }
 
 
     // == 저장 메소드 == //
-    private List<RawRestaurant> saveAll(List<RawRestaurant> restaurantList) {
-        Integer numberOfDuplicates = 0;
+    private List<RawRestaurant> saveAll(List<RawRestaurant> rawRestaurantList) {
         List<RawRestaurant> savedResult = new ArrayList<>();
-        for (RawRestaurant rawRestaurant : restaurantList) {
+        for (RawRestaurant rawRestaurant : rawRestaurantList) {
             if (save(rawRestaurant) == null) {
-                numberOfDuplicates += 1;
                 continue;
             }
             savedResult.add(rawRestaurant);
         }
-        log.info("기존 데이터와 중복된 raw는 무시되었습니다. (중복 된 데이터 수  = {})", numberOfDuplicates);
         return savedResult;
     }
 
