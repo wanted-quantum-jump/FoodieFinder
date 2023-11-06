@@ -1,19 +1,17 @@
 package com.foodiefinder.datapipeline.job;
 
+import com.foodiefinder.datapipeline.processor.dto.CombineRestaurantProcessorResultData;
 import com.foodiefinder.datapipeline.step.ChunkOrientedStep;
-import com.foodiefinder.datapipeline.writer.entity.RawRestaurant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 public class OpenApiJob implements Job {
-    private final ChunkOrientedStep<String, List<RawRestaurant>> chunkOrientedStep;
+    private final ChunkOrientedStep<String, CombineRestaurantProcessorResultData> chunkOrientedStep;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
