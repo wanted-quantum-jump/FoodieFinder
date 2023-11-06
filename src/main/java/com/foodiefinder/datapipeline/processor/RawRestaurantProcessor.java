@@ -2,12 +2,14 @@ package com.foodiefinder.datapipeline.processor;
 
 import com.foodiefinder.datapipeline.processor.dto.RootData;
 import com.foodiefinder.datapipeline.writer.entity.RawRestaurant;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.foodiefinder.datapipeline.processor.dto.RootData.*;
 
+@Component
 public class RawRestaurantProcessor implements ItemProcessor<String, List<RawRestaurant>> {
 
     @Override
