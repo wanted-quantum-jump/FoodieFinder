@@ -1,27 +1,30 @@
 package com.foodiefinder.restaurants.controller;
 
+import static org.hamcrest.Matchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodiefinder.common.dto.Response;
-import com.foodiefinder.common.exception.CustomException;
-import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
+import com.foodiefinder.restaurants.dto.RatingRequest;
 import com.foodiefinder.restaurants.dto.RestaurantsResponse;
+import com.foodiefinder.restaurants.service.RatingService;
 import com.foodiefinder.restaurants.service.RestaurantsService;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.http.MediaType;
@@ -32,14 +35,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @ExtendWith(SpringExtension.class)
 public class RestaurantsControllerTest {
     private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
     @Mock
     private RestaurantsService restaurantsService;
-
+    @Mock
+    private RatingService ratingService;
     @InjectMocks
     private RestaurantsController restaurantsController;
 
     @BeforeEach
     public void setUp() {
+        objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(restaurantsController).build();
     }
 
@@ -72,4 +78,26 @@ public class RestaurantsControllerTest {
         // Verify
         verify(restaurantsService).getRestaurants(lat, lon, range, orderBy);
     }
+
+    @Test
+    void shouldCreateRatingSuccessfully() throws Exception {
+        Long restaurantId = 1L;
+        RatingRequest dto = new RatingRequest();
+        dto.setUserId(123L);
+        dto.setValue(5);
+        dto.setComment("Great food and service!");
+        ArgumentCaptor<RatingRequest> captor = ArgumentCaptor.forClass(RatingRequest.class);
+
+        Response<Void> serviceResponse = Response.success(null);
+        when(ratingService.createRating(eq(restaurantId), captor.capture()))
+                .thenReturn(serviceResponse);
+
+        mockMvc.perform(post("/api/restaurants/{restaurantId}/ratings", restaurantId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+
+        verify(ratingService).createRating(eq(restaurantId), captor.capture());
+    }
+
 }
