@@ -4,6 +4,7 @@ import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.user.crypto.PasswordEncoder;
 import com.foodiefinder.user.dto.UserDetailResponse;
+import com.foodiefinder.user.dto.UserInfoUpdateRequest;
 import com.foodiefinder.user.dto.UserSignupRequest;
 import com.foodiefinder.user.entity.User;
 import com.foodiefinder.user.repository.UserRepository;
@@ -56,5 +57,14 @@ public class UserService {
                 .build();
 
         return response;
+    }
+
+    @Transactional
+    public void infoUpdate(Long userId, UserInfoUpdateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        user.userInfoUpdate(request.getLatitude(),
+                request.getLongitude(), request.isLunchRecommendationEnabled());
     }
 }

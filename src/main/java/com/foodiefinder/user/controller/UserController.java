@@ -2,6 +2,7 @@ package com.foodiefinder.user.controller;
 
 
 import com.foodiefinder.user.dto.UserDetailResponse;
+import com.foodiefinder.user.dto.UserInfoUpdateRequest;
 import com.foodiefinder.user.dto.UserSignupRequest;
 import com.foodiefinder.user.service.UserService;
 import jakarta.validation.Valid;
@@ -32,6 +33,15 @@ public class UserController {
         UserDetailResponse response = userService.getUserDetail(userId);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{userId}")
+    public ResponseEntity<?> userInfoUpdate(@PathVariable Long userId,
+                                            @RequestBody UserInfoUpdateRequest request) {
+
+        userService.infoUpdate(userId, request);
+
+        return ResponseEntity.noContent().build();
     }
 }
 

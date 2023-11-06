@@ -38,5 +38,13 @@ public class User extends BaseTimeEntity {
         this.password = password;
     }
 
+    public void userInfoUpdate(String latitude, String longitude, boolean lunchRecommendationEnabled) {
+        this.latitude = latitude != null ? latitude : this.latitude;
+        this.longitude = longitude != null ? longitude : this.latitude;
+        this.lunchRecommendationEnabled = lunchRecommendationEnabled != false ?
+                lunchRecommendationEnabled : this.lunchRecommendationEnabled;
+    }
+
+
 
 }
