@@ -20,7 +20,7 @@ public class JwtUtils {
 
     private final static Long EXPIRED_MS = 60 * 60 * 1000L;
 
-     public String generateToken(String account) {
+    public String generateToken(String account) {
          Claims claims = Jwts.claims();
          claims.put("account", account);
 
@@ -30,11 +30,11 @@ public class JwtUtils {
                  .setExpiration(new Date(System.currentTimeMillis() + EXPIRED_MS))
                  .signWith(SignatureAlgorithm.HS512, secretKey)
                  .compact();
-     }
+    }
 
-     public String extractAccount(String token) {
+    public String extractAccount(String token) {
          return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("account", String.class);
-     }
+    }
 
     public boolean isTokenValid(String token) {
         try {
