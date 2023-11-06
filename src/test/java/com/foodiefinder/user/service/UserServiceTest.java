@@ -4,6 +4,7 @@ import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.user.crypto.PasswordEncoder;
 import com.foodiefinder.user.dto.UserDetailResponse;
+import com.foodiefinder.user.dto.UserInfoUpdateRequest;
 import com.foodiefinder.user.dto.UserSignupRequest;
 import com.foodiefinder.user.entity.User;
 import com.foodiefinder.user.repository.UserRepository;
@@ -102,6 +103,36 @@ class UserServiceTest {
         assertEquals(user.getLatitude(), response.getLatitude());
         assertEquals(user.getLongitude(), response.getLongitude());
         assertEquals(user.isLunchRecommendationEnabled(), response.isLunchRecommendationEnabled());
+
+    }
+
+    @DisplayName("유저 정보 업데이트")
+    @Test
+    void userInfoUpdate() throws Exception {
+        User user = User.builder()
+                .account("testAccount")
+                .password("123123qwe!!")
+                .build();
+
+        Long userId = user.getId();
+
+        UserInfoUpdateRequest request = UserInfoUpdateRequest.builder()
+                .latitude("123")
+                .longitude("456")
+                .lunchRecommendationEnabled(true)
+                .build();
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+
+        userService.infoUpdate(user.getId(), request);
+
+        assertEquals(user.getLatitude(), request.getLatitude());
+        assertEquals(user.getLongitude(), request.getLongitude());
+        assertEquals(user.isLunchRecommendationEnabled(), request.isLunchRecommendationEnabled());
+
+
+
+
     }
 
 

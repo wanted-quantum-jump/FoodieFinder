@@ -6,6 +6,7 @@ import com.foodiefinder.auth.jwt.JwtUtils;
 import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.user.dto.UserDetailResponse;
+import com.foodiefinder.user.dto.UserInfoUpdateRequest;
 import com.foodiefinder.user.dto.UserSignupRequest;
 import com.foodiefinder.user.repository.UserRepository;
 import com.foodiefinder.user.service.UserService;
@@ -122,5 +123,24 @@ class UserControllerTest {
 
     }
 
+    @DisplayName("유저 정보 업데이트")
+    @WithMockUser
+    @Test
+    void userInfoUpdate() throws Exception {
+        UserInfoUpdateRequest request = UserInfoUpdateRequest.builder()
+                .latitude("123")
+                .longitude("456")
+                .lunchRecommendationEnabled(true)
+                .build();
+
+        Long userId = 1L;
+        String json = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(patch("/api/users/" + userId).with(csrf())
+                .contentType(APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+    }
 
 }
