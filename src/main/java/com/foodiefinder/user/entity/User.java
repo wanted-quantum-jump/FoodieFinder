@@ -29,14 +29,17 @@ public class User extends BaseTimeEntity {
     //경도
     private String longitude;
 
-    //점심추천기능 사용 여부
-    private boolean lunchRecommendationEnabled;
-
     @Builder
     public User(String account, String password) {
         this.account = account;
         this.password = password;
     }
+
+    public void userInfoUpdate(String latitude, String longitude) {
+        this.latitude = latitude != null ? latitude : this.latitude;
+        this.longitude = longitude != null ? longitude : this.longitude;
+    }
+
 
 
 }
