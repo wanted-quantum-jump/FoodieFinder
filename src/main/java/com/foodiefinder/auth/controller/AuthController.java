@@ -25,7 +25,7 @@ public class AuthController {
         String token = authService.login(request);
 
         Map<String, String> response = new HashMap<>();
-        response.put("token", token);
+        response.put("Bearer Token", token);
 
         return ResponseEntity.ok().body(response);
     }
