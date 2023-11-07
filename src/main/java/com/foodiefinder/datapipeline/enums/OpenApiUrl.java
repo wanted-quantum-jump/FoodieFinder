@@ -11,7 +11,11 @@ public enum OpenApiUrl {
     FASTFOOD("Genrestrtfastfood"), // 패스트푸드
     SASH("Genrestrtsash"), // 생선회
     BUFF("Genrestrtbuff"), // 뷔페식
-    FODTUCK("Resrestrtfodtuck") // 푸드 트럭
+    FODTUCK("Resrestrtfodtuck"), // 푸드 트럭
+    FUGU("Genrestrtfugu"),
+    STANDPUB("Genrestrtstandpub"),
+    TRATTERM("Genrestrttratearm"),
+    BSRPCOOK("Genrestrtbsrpcook")
         ;
     private final String url;
 
