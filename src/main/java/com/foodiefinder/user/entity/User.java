@@ -29,9 +29,6 @@ public class User extends BaseTimeEntity {
     //경도
     private String longitude;
 
-    //점심추천기능 사용 여부
-    private boolean lunchRecommendationEnabled;
-
     @Builder
     public User(String account, String password) {
         this.account = account;

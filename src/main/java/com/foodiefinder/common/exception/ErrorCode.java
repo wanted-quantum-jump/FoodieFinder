@@ -10,6 +10,7 @@ public enum ErrorCode {
 
     //User
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "U001", "이미 계정이 존재합니다."),
+    USER_NOT_EXIST(HttpStatus.BAD_REQUEST,"U001" , "존재하지 않는 유저입니다."),
 
     //Processor
     UNPARSEABLE_DATA(HttpStatus.NOT_IMPLEMENTED, "P001", "Json 형식과 맞지 않는 데이터입니다."),
