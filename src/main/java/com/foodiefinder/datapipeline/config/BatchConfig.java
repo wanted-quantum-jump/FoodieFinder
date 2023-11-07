@@ -2,11 +2,12 @@ package com.foodiefinder.datapipeline.config;
 
 import com.foodiefinder.datapipeline.enums.OpenApiUrl;
 import com.foodiefinder.datapipeline.job.StateHandler;
-import com.foodiefinder.datapipeline.processor.RawRestaurantProcessor;
+import com.foodiefinder.datapipeline.processor.CombineRestaurantProcessor;
+import com.foodiefinder.datapipeline.processor.dto.CombineRestaurantProcessorResultData;
 import com.foodiefinder.datapipeline.reader.OpenApiPagingItemReader;
 import com.foodiefinder.datapipeline.step.ChunkOrientedStep;
 import com.foodiefinder.datapipeline.util.UrlParamsRequestStrategy;
-import com.foodiefinder.datapipeline.writer.entity.RawRestaurant;
+import com.foodiefinder.datapipeline.writer.CombineRestaurantWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatusCode;
@@ -20,11 +21,14 @@ import java.util.Map;
 public class BatchConfig {
 
     @Bean
-    public ChunkOrientedStep<String, List<RawRestaurant>> chunkOrientedStep(OpenApiPagingItemReader<String> openApiPagingItemReader) {
-        return ChunkOrientedStep.<String, List<RawRestaurant>>builder()
+    public ChunkOrientedStep<String, CombineRestaurantProcessorResultData> chunkOrientedStep(
+            OpenApiPagingItemReader<String> openApiPagingItemReader,
+            CombineRestaurantProcessor combineRestaurantProcessor,
+            CombineRestaurantWriter combineRestaurantWriter) {
+        return ChunkOrientedStep.<String, CombineRestaurantProcessorResultData>builder()
                 .itemReader(openApiPagingItemReader)
-                .itemProcessor(new RawRestaurantProcessor())
-//                .itemWriter()
+                .itemProcessor(combineRestaurantProcessor)
+                .itemWriter(combineRestaurantWriter)
                 .build();
     }
 

@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
+    Restaurant findByBusinessPlaceNameAndRoadAddress(String businessPlaceName, String roadAddress);
+
     List<Restaurant> findByLatitudeBetweenAndLongitudeBetweenOrderByAverageRatingDesc(
             Double minLatitude, Double maxLatitude, Double minLongitude, Double maxLongitude
     );
