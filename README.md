@@ -198,13 +198,13 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 
 </details>
 
-## 5. API Document
+## 6. API Document
 
-## 6. 프로젝트 스케줄링
+## 7. 프로젝트 스케줄링
 
 [Github Project](https://github.com/orgs/wanted-quantum-jump/projects/5)에 기능별 issue를 등록하며 프로젝트 개발 일정을 관리하였습니다.
 ![image](https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/fa45837d-3362-4eff-901b-e42dc35c8319)
 
-## 7. 협업 규칙
+## 8. 협업 규칙
 
 [Team Q Notion - 팀 규칙 및 컨벤션](https://www.notion.so/f22c8da6c7e4430a90dffc34b7b7d80c)을 참조해 주세요.
