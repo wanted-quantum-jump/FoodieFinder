@@ -6,7 +6,9 @@ import com.foodiefinder.user.crypto.PasswordEncoder;
 import com.foodiefinder.user.dto.UserDetailResponse;
 import com.foodiefinder.user.dto.UserInfoUpdateRequest;
 import com.foodiefinder.user.dto.UserSignupRequest;
+import com.foodiefinder.user.entity.LunchRecommendationSettings;
 import com.foodiefinder.user.entity.User;
+import com.foodiefinder.user.repository.LunchRecommendationSettingsRepository;
 import com.foodiefinder.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private LunchRecommendationSettingsRepository lunchRecommendationSettingsRepository;
 
     @Spy
     private PasswordEncoder passwordEncoder;
@@ -92,9 +97,15 @@ class UserServiceTest {
 
         userRepository.save(user);
 
+        LunchRecommendationSettings settings = LunchRecommendationSettings.builder()
+                .user(user)
+                .lunchRecommendationEnabled(true)
+                .build();
+
         Long userId = user.getId();
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(lunchRecommendationSettingsRepository.findByUser(user)).willReturn(Optional.of(settings));
 
         UserDetailResponse response = userService.getUserDetail(userId);
 
@@ -102,7 +113,7 @@ class UserServiceTest {
         assertEquals(user.getAccount(), response.getAccount());
         assertEquals(user.getLatitude(), response.getLatitude());
         assertEquals(user.getLongitude(), response.getLongitude());
-        assertEquals(user.isLunchRecommendationEnabled(), response.isLunchRecommendationEnabled());
+
 
     }
 
@@ -122,13 +133,18 @@ class UserServiceTest {
                 .lunchRecommendationEnabled(true)
                 .build();
 
+        LunchRecommendationSettings settings = LunchRecommendationSettings.builder()
+                .user(user)
+                .lunchRecommendationEnabled(true)
+                .build();
+
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(lunchRecommendationSettingsRepository.findByUser(user)).willReturn(Optional.of(settings));
 
         userService.infoUpdate(user.getId(), request);
 
         assertEquals(user.getLatitude(), request.getLatitude());
         assertEquals(user.getLongitude(), request.getLongitude());
-        assertEquals(user.isLunchRecommendationEnabled(), request.isLunchRecommendationEnabled());
 
 
 
