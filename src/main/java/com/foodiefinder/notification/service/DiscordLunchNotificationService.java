@@ -47,7 +47,7 @@ public class DiscordLunchNotificationService {
         List<Message> notifications = new ArrayList<>();
         Set<String> webhookUrls = new HashSet<>(); //중복 url 제거를 위한 set
         for (NotificationSetting ns : notificationSettings) {
-            if (IsNotificationSettingValid(webhookUrls, ns)) {
+            if (isInvalidNotificationSetting(webhookUrls, ns)) {
                 continue;
             }
             webhookUrls.add(ns.getWebHookUrl());
@@ -59,7 +59,7 @@ public class DiscordLunchNotificationService {
     /***
      * 유저 설정이 잘못되었는지 검증 , 잘못되었으면 ture 리턴
      */
-    private static boolean IsNotificationSettingValid(Set<String> webhookUrls,
+    private static boolean isInvalidNotificationSetting(Set<String> webhookUrls,
         NotificationSetting ns) {
         if (ns.hasNoWebhookUrl()) {
             log.info("[메시지 발송 실패] 유저 {}의 webhookUrl이 없습니다.", ns.getUser().getAccount());
