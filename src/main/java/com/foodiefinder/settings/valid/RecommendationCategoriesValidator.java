@@ -2,16 +2,17 @@ package com.foodiefinder.settings.valid;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RecommendationCategoriesValidator implements
-    ConstraintValidator<ValidRecommendationCategories, String> {
+        ConstraintValidator<ValidRecommendationCategories, String> {
 
     // 유효한 카테고리 목록
     private static final List<String> validCategories = Arrays.asList("김밥(도시락)", "카페", "이동조리",
-        "중국식", "일식", "탕류", "패스트푸드", "생선회", "뷔페식", "복어취급", "정종·대포집(선술집)", "전통찻집", "출장조리");
+            "중국식", "일식", "탕류(보신용)", "패스트푸드", "횟집", "뷔페식", "복어취급", "정종/대포집/소주방", "전통찻집", "출장조리");
 
     /***
      * 유효한 카테고리만 필터링 후 String으로 만들어서 반환
@@ -26,8 +27,8 @@ public class RecommendationCategoriesValidator implements
 
         // 유효한 카테고리와 일치하는 것들 필터링
         List<String> matchingCategories = inputCategories.stream()
-            .filter(validCategories::contains)
-            .collect(Collectors.toList());
+                .filter(validCategories::contains)
+                .collect(Collectors.toList());
 
         // 결과를 String으로 변환해서 반환
         return String.join(", ", matchingCategories);

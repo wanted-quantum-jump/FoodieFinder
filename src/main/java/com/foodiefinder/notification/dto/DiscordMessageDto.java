@@ -23,7 +23,8 @@ public class DiscordMessageDto {
 
     //=======================메시지에 포함될 상수 끝=======================
 
-    private String avatar_url;
+    private String username = USERNAME;
+    private String avatar_url = "https://cdn-icons-png.flaticon.com/512/857/857755.png";
     private String content;
     private List<Embed> embeds = new ArrayList<>();
 
