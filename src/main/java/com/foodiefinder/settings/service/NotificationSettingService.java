@@ -25,7 +25,7 @@ public class NotificationSettingService {
         Long userId = changeRequest.getUserId();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         createOrUpdate(changeRequest, userId, user);
 
