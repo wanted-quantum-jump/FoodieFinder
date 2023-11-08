@@ -29,7 +29,7 @@ public class DataPipelineCacheRepository {
      */
     public boolean isResponseCacheExist(String response) {
         byte[] hash = (RESPONSE_KEY_PREFIX + HashGenerator.calculateSHA256(response)).getBytes();
-        RedisConnection connection = redisConnectionFactory.getConnection();
+        RedisConnection connection = getConnection();
         boolean isExist = connection.stringCommands().get(hash) != null;
 
         if(isExist){
@@ -49,7 +49,7 @@ public class DataPipelineCacheRepository {
      */
     public boolean setResponseCache(String response) {
         byte[] hash = (RESPONSE_KEY_PREFIX + HashGenerator.calculateSHA256(response)).getBytes();
-        RedisConnection connection = redisConnectionFactory.getConnection();
+        RedisConnection connection = getConnection();
         boolean set = connection.stringCommands()
                 .set(hash, "true".getBytes(),
                         Expiration.seconds(EXPIRE_TIME),
@@ -64,7 +64,7 @@ public class DataPipelineCacheRepository {
      * @return 변경된 내용의 restaurant
      */
     public List<Restaurant> isRestaurantsCacheExist(List<Restaurant> restaurants) {
-        RedisConnection connection = redisConnectionFactory.getConnection();
+        RedisConnection connection = getConnection();
         connection.openPipeline();
         List<byte[]> keys = restaurants.stream()
                 .map(restaurant -> (RESTAURANT_KEY_PREFIX + HashGenerator.calculateSHA256(restaurant.toString())).getBytes())
@@ -84,7 +84,7 @@ public class DataPipelineCacheRepository {
      * @param restaurants
      */
     public void setRestaurantCache(List<Restaurant> restaurants) {
-        RedisConnection connection = redisConnectionFactory.getConnection();
+        RedisConnection connection = getConnection();
         connection.openPipeline();
         List<byte[]> keys = restaurants.stream()
                 .map(restaurant -> (RESTAURANT_KEY_PREFIX + HashGenerator.calculateSHA256(restaurant.toString())).getBytes())
@@ -96,5 +96,9 @@ public class DataPipelineCacheRepository {
         );
         connection.closePipeline();
         connection.close();
+    }
+
+    private RedisConnection getConnection() {
+        return redisConnectionFactory.getConnection();
     }
 }
