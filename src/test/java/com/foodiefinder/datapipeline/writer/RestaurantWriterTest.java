@@ -6,6 +6,7 @@ import com.foodiefinder.datapipeline.writer.entity.RawRestaurant;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -114,23 +115,10 @@ class RestaurantWriterTest {
                 ]
             }""";
 
-    @Test
-    void write() {
-        //given
-        List<RawRestaurant> rawDatalist = RootData.of(jsonString).toEntityList();
-        List<Restaurant> restaurantList = restaurantProcessor.process(rawDatalist); //raw 데이터 전처리해서 Restaurant로 변환
-
-        //when
-        List<Restaurant> rawRestaurants = restaurantRepository.saveAll(restaurantList);
-
-        for (Restaurant r : rawRestaurants) {
-            log.info("id = {}", r.getId());
-        }
-    }
 
     @DisplayName("요구사항 : 데이터를 중복 저장 시도할 경우 무시")
     @Test
-    void 유니크조건위반(){
+    void 유니크조건위반() {
         List<RawRestaurant> rawDatalist = RootData.of(jsonString).toEntityList();
         List<Restaurant> restaurantList = restaurantProcessor.process(rawDatalist); //raw 데이터 전처리해서 Restaurant로 변환
 
@@ -150,11 +138,11 @@ class RestaurantWriterTest {
         when(restaurantRepository.save(restaurant2)).thenThrow(DataIntegrityViolationException.class); // 중복 저장시 예외
 
         //when
-        List<Restaurant> savedRestaurants = ReflectionTestUtils.invokeMethod(restaurantWriter, "saveAll", restaurantList);
+        Assertions.assertThatThrownBy(() -> ReflectionTestUtils.invokeMethod(restaurantWriter, "saveAll", restaurantList)).isInstanceOf(DataIntegrityViolationException.class);
         //then
         verify(restaurantRepository, times(2)).save(any()); // 저장 메서드가 2번 호출되어야 함
-        assertThat(savedRestaurants.get(0)).isEqualTo(restaurant1); // 저장된 레스토랑은 raw1과 같아야 함
-        assertThat(savedRestaurants.size()).isEqualTo(1); // 저장된 레스토랑 개수는 1개여야 함
+        assertThat(restaurantList.get(0)).isEqualTo(restaurant1); // 저장된 레스토랑은 raw1과 같아야 함
+        assertThat(restaurantList.size()).isEqualTo(2); // 저장된 레스토랑 개수는 1개여야 함
     }
 
 }
