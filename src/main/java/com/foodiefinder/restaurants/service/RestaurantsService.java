@@ -7,14 +7,13 @@ import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
 import com.foodiefinder.restaurants.dto.RestaurantDetailResponse;
-import com.foodiefinder.restaurants.dto.RestaurantsResponse;
-import jakarta.persistence.EntityNotFoundException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,20 +24,22 @@ public class RestaurantsService {
     private final RestaurantRepository restaurantRepository;
 
 
-    public Response<RestaurantsResponse> getRestaurants(String lat, String lon, double range, String orderBy) {
+    public Response<List<RestaurantDetailResponse>> getRestaurants(String lat, String lon, double range, String orderBy) {
         double latitude = Double.parseDouble(lat);
         double longitude = Double.parseDouble(lon);
 
         List<Restaurant> restaurantsWithinRange = restaurantRepository.findAll().stream()
                 .filter(restaurant -> calculateDistance(latitude, longitude,
                         restaurant.getLatitude(), restaurant.getLongitude()) <= range)
-                .sorted(getComparator(orderBy, latitude, longitude))
-                .collect(Collectors.toList());
+                .sorted(getComparator(orderBy, latitude, longitude)).toList();
 
         ensureRestaurantsFound(restaurantsWithinRange);
-        RestaurantsResponse restaurantsDTO = RestaurantsResponse.from(restaurantsWithinRange);
-
-        return Response.success(restaurantsDTO);
+        List<RestaurantDetailResponse> result = new ArrayList<>();
+        for (Restaurant restaurant : restaurantsWithinRange) {
+            RestaurantDetailResponse dto = RestaurantDetailResponse.from(restaurant);
+            result.add(dto);
+        }
+        return Response.success(result);
     }
 
     private void ensureRestaurantsFound(List<Restaurant> restaurants) {
