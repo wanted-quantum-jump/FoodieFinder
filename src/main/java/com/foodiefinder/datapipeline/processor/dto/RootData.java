@@ -33,6 +33,7 @@ public class RootData {
     public List<DataElement> dataElements;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public static RootData of(String jsonString) {
         try {
             // 원본 JSON 데이터를 RootData 객체로 변환
@@ -77,15 +78,6 @@ public class RootData {
         private ResultElement resultElement;
         @JsonProperty("api_version")
         private String apiVersion;
-
-        @Override
-        public String toString() {
-            return "HeadElement{" +
-                    "listTotalCount=" + listTotalCount +
-                    ", resultElement=" + resultElement +
-                    ", apiVersion='" + apiVersion + '\'' +
-                    '}';
-        }
 
     }
 
@@ -148,34 +140,6 @@ public class RootData {
         @JsonProperty("REFINE_WGS84_LAT")
         private String latitude;
 
-        @Override
-        public String toString() {
-            return "RowData{" +
-                    "sigunName='" + sigunName + '\'' +
-                    ", sigunCode='" + sigunCode + '\'' +
-                    ", businessPlaceName='" + businessPlaceName + '\'' +
-                    ", licenseDate='" + licenseDate + '\'' +
-                    ", businessStateName='" + businessStateName + '\'' +
-                    ", closeDate='" + closeDate + '\'' +
-                    ", locationArea=" + locationArea +
-                    ", waterFacilityTypeName='" + waterFacilityTypeName + '\'' +
-                    ", maleEmployeeCount=" + maleEmployeeCount +
-                    ", year=" + year +
-                    ", multiUseBusinessEstablishment='" + multiUseBusinessEstablishment + '\'' +
-                    ", gradeDivisionName='" + gradeDivisionName + '\'' +
-                    ", totalFacilityScale=" + totalFacilityScale +
-                    ", femaleEmployeeCount=" + femaleEmployeeCount +
-                    ", businessSiteCircumferenceTypeName='" + businessSiteCircumferenceTypeName + '\'' +
-                    ", sanitationIndustryType='" + sanitationIndustryType + '\'' +
-                    ", sanitationBusinessCondition='" + sanitationBusinessCondition + '\'' +
-                    ", totalEmployeeCount=" + totalEmployeeCount +
-                    ", lotNumberAddress='" + lotNumberAddress + '\'' +
-                    ", roadAddress='" + roadAddress + '\'' +
-                    ", zipCode=" + zipCode +
-                    ", longitude=" + longitude +
-                    ", latitude=" + latitude +
-                    '}';
-        }
     }
 
     public List<RawRestaurant> toEntityList() {
