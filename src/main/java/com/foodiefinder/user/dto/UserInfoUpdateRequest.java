@@ -10,12 +10,10 @@ public class UserInfoUpdateRequest {
 
     private String latitude;
     private String longitude;
-    private boolean lunchRecommendationEnabled;
 
     @Builder
-    public UserInfoUpdateRequest(String latitude, String longitude, boolean lunchRecommendationEnabled) {
+    public UserInfoUpdateRequest(String latitude, String longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.lunchRecommendationEnabled = lunchRecommendationEnabled;
     }
 }

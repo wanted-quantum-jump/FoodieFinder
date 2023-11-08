@@ -6,9 +6,7 @@ import com.foodiefinder.user.crypto.PasswordEncoder;
 import com.foodiefinder.user.dto.UserDetailResponse;
 import com.foodiefinder.user.dto.UserInfoUpdateRequest;
 import com.foodiefinder.user.dto.UserSignupRequest;
-import com.foodiefinder.user.entity.LunchRecommendationSettings;
 import com.foodiefinder.user.entity.User;
-import com.foodiefinder.user.repository.LunchRecommendationSettingsRepository;
 import com.foodiefinder.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,9 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -33,9 +33,6 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private LunchRecommendationSettingsRepository lunchRecommendationSettingsRepository;
 
     @Spy
     private PasswordEncoder passwordEncoder;
@@ -97,15 +94,9 @@ class UserServiceTest {
 
         userRepository.save(user);
 
-        LunchRecommendationSettings settings = LunchRecommendationSettings.builder()
-                .user(user)
-                .lunchRecommendationEnabled(true)
-                .build();
-
         Long userId = user.getId();
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(lunchRecommendationSettingsRepository.findByUser(user)).willReturn(Optional.of(settings));
 
         UserDetailResponse response = userService.getUserDetail(userId);
 
@@ -130,23 +121,14 @@ class UserServiceTest {
         UserInfoUpdateRequest request = UserInfoUpdateRequest.builder()
                 .latitude("123")
                 .longitude("456")
-                .lunchRecommendationEnabled(true)
-                .build();
-
-        LunchRecommendationSettings settings = LunchRecommendationSettings.builder()
-                .user(user)
-                .lunchRecommendationEnabled(true)
                 .build();
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(lunchRecommendationSettingsRepository.findByUser(user)).willReturn(Optional.of(settings));
 
         userService.infoUpdate(user.getId(), request);
 
         assertEquals(user.getLatitude(), request.getLatitude());
         assertEquals(user.getLongitude(), request.getLongitude());
-
-
 
 
     }
