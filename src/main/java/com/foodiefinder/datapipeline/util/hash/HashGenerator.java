@@ -1,4 +1,4 @@
-package com.foodiefinder.datapipeline.cache;
+package com.foodiefinder.datapipeline.util.hash;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

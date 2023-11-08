@@ -1,14 +1,12 @@
 package com.foodiefinder.datapipeline.cache;
 
-import com.foodiefinder.datapipeline.cache.HashGenerator;
+import com.foodiefinder.datapipeline.util.hash.HashGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Repository;
-
-import java.util.Base64;
 
 @Repository
 @RequiredArgsConstructor
