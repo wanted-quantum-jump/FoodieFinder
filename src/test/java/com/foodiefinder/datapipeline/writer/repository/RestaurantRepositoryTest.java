@@ -10,7 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 
 @RepositoryUnitTest
-@DisplayName("단위 테스트 - RestaurantRepository ")
+@DisplayName("단위테스트 - RestaurantRepository ")
 class RestaurantRepositoryTest {
 
     @Autowired
