@@ -99,7 +99,7 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
     </tr>
     <tr>
         <td>정지원</td>
-        <td></td>
+        <td>사용자 관련 서비스 및 인증, 인가 구현</td>
     </tr>
 </table>
 
@@ -203,6 +203,7 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 </details>
 
 ## 6. API Document
+최신 문서는 [FoodieFinder API Document](https://documenter.getpostman.com/view/13712893/2s9YXiY1Kv)를 참조해 주세요. (추후 spring rest docs로 이전 예정!!!)
 
 ## 7. 프로젝트 스케줄링
 
