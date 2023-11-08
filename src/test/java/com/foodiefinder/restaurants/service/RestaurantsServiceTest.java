@@ -1,8 +1,5 @@
 package com.foodiefinder.restaurants.service;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.foodiefinder.common.dto.Response;
 import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
@@ -10,19 +7,22 @@ import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
 import com.foodiefinder.restaurants.dto.RestaurantDetailResponse;
 import com.foodiefinder.restaurants.dto.RestaurantsResponse;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class RestaurantsServiceTest {
@@ -59,6 +59,7 @@ public class RestaurantsServiceTest {
 
         verify(restaurantRepository).findAll();
     }
+
     @Test
     public void 식당을찾으면_성공() {
         // Arrange
@@ -101,7 +102,7 @@ public class RestaurantsServiceTest {
         when(restaurantRepository.findAll()).thenReturn(mockRestaurants);
 
         // Act
-        Response<RestaurantsResponse> response = restaurantsService.getRestaurants(lat, lon, range, orderBy);
+        Response<List<RestaurantDetailResponse>> response = restaurantsService.getRestaurants(lat, lon, range, orderBy);
 
         // Assert
         assertEquals(HttpStatus.OK.value(), response.getStatus());
@@ -111,6 +112,7 @@ public class RestaurantsServiceTest {
         // Verify
         verify(restaurantRepository).findAll();
     }
+
     @Test
     public void getRestaurantDetail_ReturnsCorrectDetails_WhenRestaurantExists() {
         // Arrange
@@ -126,7 +128,7 @@ public class RestaurantsServiceTest {
                 .latitude(37.517237)
                 .longitude(127.047326)
                 .averageRating(5)
-                .build() ;
+                .build();
 
         RestaurantDetailResponse expectedDetailResponse = RestaurantDetailResponse.from(mockRestaurant);
 
