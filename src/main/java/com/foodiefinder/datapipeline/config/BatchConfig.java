@@ -6,7 +6,7 @@ import com.foodiefinder.datapipeline.processor.CombineRestaurantProcessor;
 import com.foodiefinder.datapipeline.processor.dto.CombineRestaurantProcessorResultData;
 import com.foodiefinder.datapipeline.reader.OpenApiPagingItemReader;
 import com.foodiefinder.datapipeline.step.ChunkOrientedStep;
-import com.foodiefinder.datapipeline.util.UrlParamsRequestStrategy;
+import com.foodiefinder.datapipeline.util.request.UrlParamsRequestStrategy;
 import com.foodiefinder.datapipeline.writer.CombineRestaurantWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,7 +49,7 @@ public class BatchConfig {
 
         // UrlParamsRequestStrategy 로 불러오는 ItemType 클래스 넘기기
         reader.setItemType(String.class);
-        reader.setRequest(new UrlParamsRequestStrategy<>());
+        reader.setRequest(new UrlParamsRequestStrategy<String>());
 
         // url 고정 파라미터 설정
         Map<String, String> params = new HashMap<>();
