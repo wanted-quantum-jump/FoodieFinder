@@ -14,9 +14,11 @@ public class CombineRestaurantWriter implements ItemWriter<CombineRestaurantProc
 
     @Override
     public void write(CombineRestaurantProcessorResultData input) {
-        if (input != null) {
+        if (input != null || !input.getRestaurants().isEmpty()) {
             restaurantWriter.write(input.getRestaurants());
+            // Response, Restaurant 캐시 데이터 저장
             dataPipelineCacheRepository.setResponseCache(input.getResponse());
+            dataPipelineCacheRepository.setRestaurantCache(input.getRestaurants());
         }
     }
 }
