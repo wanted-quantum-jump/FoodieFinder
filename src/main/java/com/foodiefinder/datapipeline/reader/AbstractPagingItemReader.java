@@ -7,10 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public  abstract class AbstractPagingItemReader<I> implements ItemReader<I> {
-    // 한번에 받아올 페이지 사이즈 설정
-
-    // 현재  페이지 넘버
-    private Map<String, String> params; // 사용할 파라미터
+    private Map<String, String> params;
     private String pageSizeName;
     private int pageSize = 100;
     private String pageName;
@@ -55,7 +52,6 @@ public  abstract class AbstractPagingItemReader<I> implements ItemReader<I> {
 
     @Override
     public void update() {
-        // 완료되었을때 다음 시작 위치 저장.
         stateHandler.saveState("currentPageIndex", currentPageIndex);
         stateHandler.saveState(JobState.RETRY.name(), false);
     }

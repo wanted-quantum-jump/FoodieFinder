@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 @Component
 public class JobStateHandler implements StateHandler {
-    private JobDataMap jobDataMap;
+    private JobDataMap jobDataMap = new JobDataMap();
 
     @Override
     public <T> void saveState(String key, T value) {
@@ -36,9 +36,5 @@ public class JobStateHandler implements StateHandler {
     @Override
     public void deleteState(String key) {
         jobDataMap.remove(key);
-    }
-
-    public void setJobDataMap(JobDataMap jobDataMap) {
-        this.jobDataMap = jobDataMap;
     }
 }

@@ -5,10 +5,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.foodiefinder.common.dto.Response;
 import com.foodiefinder.common.exception.CustomException;
+import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
+import com.foodiefinder.restaurants.dto.RestaurantDetailResponse;
 import com.foodiefinder.restaurants.dto.RestaurantsResponse;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,5 +110,55 @@ public class RestaurantsServiceTest {
 
         // Verify
         verify(restaurantRepository).findAll();
+    }
+    @Test
+    public void getRestaurantDetail_ReturnsCorrectDetails_WhenRestaurantExists() {
+        // Arrange
+        Long restaurantId = 1L;
+        Restaurant mockRestaurant = Restaurant.builder()
+                .sigunName("안양시")
+                .businessPlaceName("엘")
+                .businessStateName("영업")
+                .sanitationBusinessCondition("정종/대포집/소주방")
+                .roadAddress("경기도 안양시 동안구 관악대로287번길 24, 지상2층 202호 (관양동)")
+                .lotNumberAddress("경기도 안양시 동안구 관양동 1387-22 지상2층 202호")
+                .zipCode(67890)
+                .latitude(37.517237)
+                .longitude(127.047326)
+                .averageRating(5)
+                .build() ;
+
+        RestaurantDetailResponse expectedDetailResponse = RestaurantDetailResponse.from(mockRestaurant);
+
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(mockRestaurant));
+
+        // Act
+        Response<RestaurantDetailResponse> response = restaurantsService.getRestaurantDetail(restaurantId);
+
+        // Assert
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertNotNull(response.getData());
+        assertEquals(expectedDetailResponse, response.getData());
+
+        // Verify
+        verify(restaurantRepository).findById(restaurantId);
+    }
+
+    @Test
+    public void getRestaurantDetail_ThrowsCustomException_WhenRestaurantNotFound() {
+        // Arrange
+        Long restaurantId = 1L;
+        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            restaurantsService.getRestaurantDetail(restaurantId);
+        });
+
+        assertEquals(ErrorCode.RESTAURANT_NOT_FOUND, exception.getErrorCode());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getErrorCode().getHttpStatus());
+
+        // Verify
+        verify(restaurantRepository).findById(restaurantId);
     }
 }

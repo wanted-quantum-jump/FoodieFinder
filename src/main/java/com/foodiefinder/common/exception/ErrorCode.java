@@ -10,9 +10,18 @@ public enum ErrorCode {
 
     //User
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "U001", "이미 계정이 존재합니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U002", "유저를 찾을 수 없습니다."),
+    PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "U003", "비밀번호가 일치하지 않습니다."),
+
+    //auth
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "A001", "잘못된 토큰입니다."),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "A002", "만료된 토큰입니다."),
 
     //Processor
-    UNPARSEABLE_DATA(HttpStatus.BAD_REQUEST, "P001", "파싱할 수 없는 Json 형식입니다."),
+    UNPARSEABLE_DATA(HttpStatus.NOT_IMPLEMENTED, "P001", "Json 형식과 맞지 않는 데이터입니다."),
+    MISSING_REQUIRED_VALUE(HttpStatus.NOT_IMPLEMENTED,"P002" , "필수 값이 null입니다."),
+    WRONG_NUMBER_FORMAT(HttpStatus.NOT_IMPLEMENTED," P003" , "숫자가 아닌 값입니다."),
+
     //CSV
     NOT_VALID_CSV(HttpStatus.NOT_IMPLEMENTED,"C001" ,"유효하지 않은 형식의 CSV입니다." ),
     CSV_FILE_EXCEPTION(HttpStatus.NOT_IMPLEMENTED,"C002" ,"CSV 파일을 읽어올 수 없습니다." ),
@@ -23,6 +32,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U002", "해당하는 유저가 없습니다."),
     RESTAURANT_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "해당하는 맛집이 없습니다."),
     ;
+  
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

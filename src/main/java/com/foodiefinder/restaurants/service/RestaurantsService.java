@@ -6,7 +6,9 @@ import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
+import com.foodiefinder.restaurants.dto.RestaurantDetailResponse;
 import com.foodiefinder.restaurants.dto.RestaurantsResponse;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,5 +65,13 @@ public class RestaurantsService {
         }
         return Comparator.comparingDouble((Restaurant r) ->
                 calculateDistance(latitude, longitude, r.getLatitude(), r.getLongitude()));
+    }
+
+    public Response<RestaurantDetailResponse> getRestaurantDetail(Long restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESTAURANT_NOT_FOUND));
+
+        RestaurantDetailResponse detailResponse = RestaurantDetailResponse.from(restaurant);
+        return Response.success(detailResponse);
     }
 }

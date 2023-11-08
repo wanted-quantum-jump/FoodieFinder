@@ -1,8 +1,13 @@
 package com.foodiefinder.restaurants.controller;
 
+// <<<<<<< feature/22-rating
 import static org.hamcrest.Matchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+// =======
+// import static org.junit.jupiter.api.Assertions.assertNotNull;
+// import static org.mockito.ArgumentMatchers.anyLong;
+// >>>>>>> develop
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -15,18 +20,25 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodiefinder.common.dto.Response;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
+// <<<<<<< feature/22-rating
 import com.foodiefinder.restaurants.dto.RatingRequest;
+// =======
+// import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
+// import com.foodiefinder.restaurants.dto.RestaurantDetailResponse;
+// >>>>>>> develop
 import com.foodiefinder.restaurants.dto.RestaurantsResponse;
 import com.foodiefinder.restaurants.service.RatingService;
 import com.foodiefinder.restaurants.service.RestaurantsService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,11 +49,14 @@ public class RestaurantsControllerTest {
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
     @Mock
+    private RestaurantRepository restaurantRepository;
+    @Mock
     private RestaurantsService restaurantsService;
     @Mock
     private RatingService ratingService;
     @InjectMocks
     private RestaurantsController restaurantsController;
+
 
     @BeforeEach
     public void setUp() {
@@ -78,6 +93,7 @@ public class RestaurantsControllerTest {
         // Verify
         verify(restaurantsService).getRestaurants(lat, lon, range, orderBy);
     }
+// <<<<<<< feature/22-rating
 
     @Test
     void shouldCreateRatingSuccessfully() throws Exception {
@@ -100,4 +116,34 @@ public class RestaurantsControllerTest {
         verify(ratingService).createRating(eq(restaurantId), captor.capture());
     }
 
+// =======
+//     @Test
+//     public void getRestaurantDetail_ReturnsRestaurantDetails() throws Exception {
+//         // Arrange
+//         Long restaurantId = 1L;
+//         Restaurant mockRestaurant = Restaurant.builder()
+//                 .sigunName("TestSigun")
+//                 .businessPlaceName("TestPlace")
+//                 .businessStateName("Operational")
+//                 .sanitationBusinessCondition("Clean")
+//                 .roadAddress("123 Test St.")
+//                 .lotNumberAddress("123")
+//                 .zipCode(12345)
+//                 .latitude(37.7749)
+//                 .longitude(-122.4194)
+//                 .averageRating(5)
+//                 .build();
+//         RestaurantDetailResponse detailResponse = new RestaurantDetailResponse(mockRestaurant);
+//         Response<RestaurantDetailResponse> expectedResponse = Response.success(detailResponse);
+
+//         given(restaurantsService.getRestaurantDetail(restaurantId)).willReturn(expectedResponse);
+
+//         // Act & Assert
+//         mockMvc.perform(get("/api/restaurants/{restaurantId}", restaurantId)
+//                         .accept(MediaType.APPLICATION_JSON))
+//                 .andExpect(status().isOk())
+//                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                 .andExpect(jsonPath("$.data").exists());
+//     }
+// >>>>>>> develop
 }

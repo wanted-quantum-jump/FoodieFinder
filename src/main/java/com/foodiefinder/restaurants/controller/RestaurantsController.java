@@ -2,6 +2,7 @@ package com.foodiefinder.restaurants.controller;
 
 import com.foodiefinder.common.dto.Response;
 import com.foodiefinder.restaurants.dto.RatingRequest;
+import com.foodiefinder.restaurants.dto.RestaurantDetailResponse;
 import com.foodiefinder.restaurants.dto.RestaurantsResponse;
 import com.foodiefinder.restaurants.service.RatingService;
 import com.foodiefinder.restaurants.service.RestaurantsService;
@@ -33,5 +34,9 @@ public class RestaurantsController {
     public Response<Void> createRating(@PathVariable Long restaurantId, @RequestBody RatingRequest dto) {
         return this.ratingService.createRating(restaurantId, dto);
 
+    }
+    @GetMapping("/{restaurantId}")
+    public Response<RestaurantDetailResponse> getRestaurantDetail(@PathVariable Long restaurantId) {
+        return this.restaurantsService.getRestaurantDetail(restaurantId);
     }
 }
