@@ -5,21 +5,17 @@ import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
 import com.foodiefinder.notification.dto.DiscordMessageDto;
 import com.foodiefinder.notification.dto.Message;
-import com.foodiefinder.notification.repository.NotificationSettingRepository;
 import com.foodiefinder.settings.entity.NotificationSetting;
+import com.foodiefinder.settings.repository.NotificationSettingRepository;
 import com.foodiefinder.user.entity.User;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.*;
 
 @Slf4j
 @Service
@@ -33,7 +29,7 @@ public class DiscordLunchNotificationService {
     public void sendMessages() {
         // 1.알림 발송 대상 : 추천을 원하는 유저
         List<NotificationSetting> notificationSettings = notificationSettingRepository.findAllByIsLunchRecommendationAllowed(
-            Boolean.TRUE);
+                Boolean.TRUE);
         // 2.알림 발송 대상을 위한 메시지 생성
         List<Message> messages = createMessages(notificationSettings);
         // 3.메시지 일괄 발송
@@ -60,24 +56,24 @@ public class DiscordLunchNotificationService {
      * 유저 설정이 잘못되었는지 검증 , 잘못되었으면 ture 리턴
      */
     private static boolean isInvalidNotificationSetting(Set<String> webhookUrls,
-        NotificationSetting ns) {
+                                                        NotificationSetting ns) {
         if (ns.hasNoWebhookUrl()) {
             log.info("[메시지 발송 실패] 유저 {}의 webhookUrl이 없습니다.", ns.getUser().getAccount());
             return true;
         }
         if (webhookUrls.contains(ns.getWebHookUrl())) {
             log.info("[메시지 발송 실패] 유저 {}의 webhookUrl이 다른 유저의 것과 중복되어 무시됩니다.",
-                ns.getUser().getAccount());
+                    ns.getUser().getAccount());
             return true;
         }
         if (ns.isUserLocationNotExist()) {
             log.info("[메시지 발송 실패] 유저 {}의 위치 정보가 확인되지 않아 메시지 발송이 실패했습니다.",
-                ns.getUser().getAccount());
+                    ns.getUser().getAccount());
             return true;
         }
         if (ns.hasNotValidRecommendationCategories()) {
             log.info("[메시지 발송 실패] 유저 {}의 추천 카테고리가 0개입니다. ({})", ns.getUser().getAccount(),
-                ns.getRecommendationCategories());
+                    ns.getRecommendationCategories());
             return true;
         }
         return false;
@@ -90,14 +86,14 @@ public class DiscordLunchNotificationService {
         //메시지 전송
         for (Message message : messageList) {
             WebClient webClient = WebClient
-                .builder()
-                .baseUrl(message.getWebhookUrl()) //디스코드 웹훅 url
-                .build();
+                    .builder()
+                    .baseUrl(message.getWebhookUrl()) //디스코드 웹훅 url
+                    .build();
 
             WebClient.RequestHeadersSpec<?> requestHeadersSpec = webClient
-                .post()//post
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(message.getData());// 메시지는 body에 추가
+                    .post()//post
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(message.getData());// 메시지는 body에 추가
 
             requestHeadersSpec.retrieve().bodyToMono(String.class).subscribe();//  non block
         }
@@ -116,7 +112,7 @@ public class DiscordLunchNotificationService {
         List<Restaurant> allRestaurantsInRange = findAllRestaurantsInRange(lat, lon, range);
         //2.1.2 조회한 식당 정보, 유저 설정 기반으로 메시지 내용 생성
         return createMessageContent(notificationSetting, lat, lon, range, allRestaurantsInRange,
-            targetUser);
+                targetUser);
     }
 
     /***
@@ -128,27 +124,27 @@ public class DiscordLunchNotificationService {
         GeoUtils.Coordinates bottomLeft = GeoUtils.calculateBottomLeftCoordinate(lat, lon, range);
         GeoUtils.Coordinates TopRight = GeoUtils.calculateTopRightCoordinate(lat, lon, range);
         return restaurantRepository.findByLatitudeBetweenAndLongitudeBetweenOrderByAverageRatingDesc(
-            bottomLeft.latitude, TopRight.latitude, bottomLeft.longitude, TopRight.longitude);
+                bottomLeft.latitude, TopRight.latitude, bottomLeft.longitude, TopRight.longitude);
     }
 
     /***
      * 2.1.2 조회한 식당 정보, 유저 설정 기반으로 메시지 내용 생성
      */
     private static DiscordMessageDto createMessageContent(NotificationSetting notificationSetting,
-        Double lat, Double lon, Integer range, List<Restaurant> allRestaurantsInRange,
-        User targetUser) {
+                                                          Double lat, Double lon, Integer range, List<Restaurant> allRestaurantsInRange,
+                                                          User targetUser) {
         //DiscordMessage 형식에 맞게 Dto 생성
         DiscordMessageDto discordMessageDto = new DiscordMessageDto();
         String rawCategoriesString = notificationSetting.getRecommendationCategories();
         List<String> selectedCategories = Arrays.stream(rawCategoriesString.split(","))
-            .map(String::trim).toList();
+                .map(String::trim).toList();
         //유저가 선택한 유형의 음식점만 결과 메시지에 추가
         for (String category : selectedCategories) {
             discordMessageDto.addField(category, allRestaurantsInRange, lat, lon, range);
         }
         discordMessageDto.createContent(
-            selectedCategories.get(new Random().nextInt(selectedCategories.size())),
-            targetUser.getAccount(), range);
+                selectedCategories.get(new Random().nextInt(selectedCategories.size())),
+                targetUser.getAccount(), range);
         return discordMessageDto;
     }
 
