@@ -15,34 +15,82 @@ import java.util.Date;
 @Component
 public class JwtUtils {
 
-    @Value("${jwt.secret.key}")
-    private String secretKey;
+    @Value("${jwt.secret.access.key}")
+    private String accessSecretKey;
+    @Value("${jwt.secret.refresh.key")
+    private String refreshSecretKey;
 
-    private final static Long EXPIRED_MS = 60 * 60 * 1000L;
 
-    public String generateToken(String account) {
-         Claims claims = Jwts.claims();
-         claims.put("account", account);
+    private final static Long EXPIRED_ACCESS_MS = 60 * 60 * 1000L;
+    private final static Long EXPIRED_REFRESH_MS = 60 * 60 * 24 * 1000L;
+    private final static String ACCESS_TOKEN = "accessToken";
+    private final static String REFRESH_TOKEN = "refreshToken";
 
-         return Jwts.builder()
-                 .setClaims(claims)
+    public String[] generateToken(String account) {
+         Claims accessClaims = Jwts.claims();
+         accessClaims.put("type", ACCESS_TOKEN);
+         accessClaims.put("account", account);
+
+         String accessToken = Jwts.builder()
+                 .setClaims(accessClaims)
                  .setIssuedAt(new Date(System.currentTimeMillis()))
-                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRED_MS))
-                 .signWith(SignatureAlgorithm.HS512, secretKey)
+                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRED_ACCESS_MS))
+                 .signWith(SignatureAlgorithm.HS512, accessSecretKey)
                  .compact();
+
+        Claims refreshClaims = Jwts.claims();
+        refreshClaims.put("type", REFRESH_TOKEN);
+        refreshClaims.put("account", account);
+
+        String refreshToken = Jwts.builder()
+                .setClaims(refreshClaims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRED_REFRESH_MS))
+                .signWith(SignatureAlgorithm.HS512, refreshSecretKey)
+                .compact();
+
+        String[] tokens = new String[] {accessToken, refreshToken};
+
+        return tokens;
+
     }
 
-    public String extractAccount(String token) {
-         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("account", String.class);
+    public String extractAccount(String accessToken) {
+         return Jwts.parser().setSigningKey(accessSecretKey).parseClaimsJws(accessToken).getBody().get("account", String.class);
     }
 
     public boolean isTokenValid(String token) {
         try {
-            Date expiredDate = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getExpiration();
+            Date expiredDate = Jwts.parser().setSigningKey(accessSecretKey).parseClaimsJws(token).getBody().getExpiration();
             Date currentDate = new Date();
             return !expiredDate.before(currentDate);
         } catch (JwtException e) {
             throw new CustomException(ErrorCode.EXPIRED_TOKEN);
         }
+    }
+
+    public String verifyRefreshTokenAndReissue(String refreshToken) {
+        Date expiredDate = Jwts.parser().setSigningKey(refreshSecretKey).parseClaimsJws(refreshToken).getBody().getExpiration();
+        Date currentDate = new Date();
+
+        if (!expiredDate.before(currentDate)) {
+            String account = Jwts.parser().setSigningKey(refreshSecretKey).parseClaimsJws(refreshToken).getBody().get("account", String.class);
+
+            Claims accessClaims = Jwts.claims();
+            accessClaims.put("type", ACCESS_TOKEN);
+            accessClaims.put("account", account);
+
+            String accessToken = Jwts.builder()
+                    .setClaims(accessClaims)
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + EXPIRED_ACCESS_MS))
+                    .signWith(SignatureAlgorithm.HS512, accessSecretKey)
+                    .compact();
+
+            return accessToken;
+        } else {
+            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+        }
+
     }
 }
