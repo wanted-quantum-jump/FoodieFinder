@@ -6,7 +6,7 @@ import com.foodiefinder.datapipeline.processor.CombineRestaurantProcessor;
 import com.foodiefinder.datapipeline.processor.dto.CombineRestaurantProcessorResultData;
 import com.foodiefinder.datapipeline.reader.OpenApiPagingItemReader;
 import com.foodiefinder.datapipeline.step.ChunkOrientedStep;
-import com.foodiefinder.datapipeline.util.UrlParamsRequestStrategy;
+import com.foodiefinder.datapipeline.util.response.UrlParamsRequestStrategy;
 import com.foodiefinder.datapipeline.writer.CombineRestaurantWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
