@@ -1,8 +1,8 @@
 package com.foodiefinder.settings.service;
 
-import com.foodiefinder.notification.repository.NotificationSettingRepository;
 import com.foodiefinder.settings.dto.ChangeNotificationSettingRequest;
 import com.foodiefinder.settings.entity.NotificationSetting;
+import com.foodiefinder.settings.repository.NotificationSettingRepository;
 import com.foodiefinder.user.entity.User;
 import com.foodiefinder.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;

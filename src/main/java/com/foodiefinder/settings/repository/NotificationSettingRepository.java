@@ -1,4 +1,4 @@
-package com.foodiefinder.notification.repository;
+package com.foodiefinder.settings.repository;
 
 import com.foodiefinder.settings.entity.NotificationSetting;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface NotificationSettingRepository extends JpaRepository<NotificationSetting,Long> {
+public interface NotificationSettingRepository extends JpaRepository<NotificationSetting, Long> {
     List<NotificationSetting> findAllByIsLunchRecommendationAllowed(Boolean b);
 
     Optional<NotificationSetting> findByUserId(Long userId);
