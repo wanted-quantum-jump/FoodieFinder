@@ -8,6 +8,7 @@ import com.foodiefinder.auth.jwt.JwtUtils;
 import com.foodiefinder.auth.service.AuthService;
 import com.foodiefinder.user.controller.UserController;
 import com.foodiefinder.user.dto.UserSignupRequest;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,4 +90,22 @@ class AuthControllerTest {
                 .andExpect(content().string("user"));
 
     }
+
+    @DisplayName("새로운 액세스 토큰 발급")
+    @WithMockUser
+    @Test
+    void issueRefreshToken() throws Exception{
+
+        String refreshToken = "refresh-token";
+        String newAccessToken = "new-access-token";
+
+        given(authService.issueRefreshToken(refreshToken)).willReturn(newAccessToken);
+
+        mockMvc.perform(post("/api/users/refresh").with(csrf())
+                    .cookie(new Cookie("Bearer", refreshToken)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"Bearer\":\"new-access-token\"}"));
+    }
+
 }

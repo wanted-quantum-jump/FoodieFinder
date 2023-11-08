@@ -107,4 +107,18 @@ class AuthServiceTest {
         //then
         assertThrows(CustomException.class, () -> authService.login(request));
     }
+
+    @DisplayName("토큰 재발급")
+    @Test
+    void issueNewAccessToken() {
+
+        String refreshToken = "refresh-token";
+        String newAccessToken = "new-access-token";
+
+        when(jwtUtils.verifyRefreshTokenAndReissue(refreshToken)).thenReturn(newAccessToken);
+
+        String result = authService.issueRefreshToken(refreshToken);
+
+        assertEquals(newAccessToken, result);
+    }
 }
