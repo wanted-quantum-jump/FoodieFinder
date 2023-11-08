@@ -26,7 +26,11 @@ public enum ErrorCode {
     NOT_VALID_CSV(HttpStatus.NOT_IMPLEMENTED,"C001" ,"유효하지 않은 형식의 CSV입니다." ),
     CSV_FILE_EXCEPTION(HttpStatus.NOT_IMPLEMENTED,"C002" ,"CSV 파일을 읽어올 수 없습니다." ),
     NOT_VALID_FILEPATH(HttpStatus.NOT_IMPLEMENTED,"C003" , "파일 경로 혹은 파일에 문제가 있습니다."),
+
     CITIES_DATA_NOT_FOUND(HttpStatus.NOT_IMPLEMENTED,"C004" , "시군구 데이터가 존재하지 않습니다."),
+    NO_RESTAURANTS_IN_RANGE(HttpStatus.NOT_FOUND, "R002", "이 지역에는 맛집이 없습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U002", "해당하는 유저가 없습니다."),
+    RESTAURANT_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "해당하는 맛집이 없습니다."),
     ;
   
     private final HttpStatus httpStatus;
