@@ -16,6 +16,7 @@ import java.util.List;
 // TODO: 모든 필드가 정확한 위치에 맵핑되는지 테스트
 
 @Slf4j
+@DisplayName("단위테스트 - RawRestaurantProcessorTest")
 class RawRestaurantProcessorTest {
 
     String jsonString = """
