@@ -49,13 +49,10 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 </table>
 </div>
 
----
 
 ## 0. 목차
 
 
-
----
 
 ## 1. 개발 기간
 
@@ -212,7 +209,7 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 ## 8. 협업 규칙
 ### Branch Strategy
 - `main`, `develop`, `feature`로 나누어서 진행
-- `feature`는 `이슈번호_기능 이름` 으로 명명
+- `feature`는 `이슈번호-기능_이름` 으로 명명
 
 ### Commit Convention 
 ```
