@@ -1,4 +1,4 @@
-package com.foodiefinder.datapipeline.util.response;
+package com.foodiefinder.datapipeline.util.request;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;

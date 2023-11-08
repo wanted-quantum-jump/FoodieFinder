@@ -3,7 +3,7 @@ package com.foodiefinder.datapipeline.reader;
 import com.foodiefinder.datapipeline.enums.JobState;
 import com.foodiefinder.datapipeline.enums.OpenApiUrl;
 import com.foodiefinder.datapipeline.job.JobStateHandler;
-import com.foodiefinder.datapipeline.util.response.UrlParamsRequestStrategy;
+import com.foodiefinder.datapipeline.util.UrlParamsRequestStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

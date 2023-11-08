@@ -1,7 +1,7 @@
 package com.foodiefinder.datapipeline.reader;
 
 import com.foodiefinder.datapipeline.enums.JobState;
-import com.foodiefinder.datapipeline.util.response.RequestStrategy;
+import com.foodiefinder.datapipeline.util.RequestStrategy;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
