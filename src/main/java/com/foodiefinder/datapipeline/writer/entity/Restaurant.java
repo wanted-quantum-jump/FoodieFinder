@@ -108,6 +108,13 @@ public class Restaurant extends BaseTimeEntity {
 
     }
 
+    @Override
+    public String toString() {
+        return sigunName + businessPlaceName + businessStateName
+                + sanitationBusinessCondition + roadAddress + lotNumberAddress
+                + zipCode + latitude + longitude;
+    }
+
     public void addRating(int average) {
         this.averageRating = average;
     }
