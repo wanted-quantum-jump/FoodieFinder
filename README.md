@@ -10,16 +10,17 @@
 <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/Spring Data JPA-gray?style=for-the-badge&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/Junit-25A162?style=for-the-badge&logo=JUnit5&logoColor=white"/></a>
-    
+</div>
+<div align="center">
 <img src="https://img.shields.io/badge/MySQL 8-4479A1?style=for-the-badge&logo=MySQL&logoColor=white"/></a>
 <img src="https://img.shields.io/static/v1?style=for-the-badge&message=Redis&color=DC382D&logo=Redis&logoColor=FFFFFF&label=" alt="Redis">
 <img src="https://img.shields.io/static/v1?style=for-the-badge&message=Amazon+EC2&color=222222&logo=Amazon+EC2&logoColor=FF9900&label=" alt="Amazon EC2">
 <img src="https://img.shields.io/static/v1?style=for-the-badge&message=Amazon+RDS&color=527FFF&logo=Amazon+RDS&logoColor=FFFFFF&label=" alt="Amazon RDS">
-
+</div>
+<div align="center">
 <img src="https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/Notion-FFFFFF?style=for-the-badge&logo=Notion&logoColor=black"/></a>
 <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
-
 </div>
 
 <br>
@@ -49,17 +50,20 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 </table>
 </div>
 
----
 
 ## 0. 목차
-
-
-
----
+- [1.개발 기간](#1-개발-기간)
+- [2.프로젝트 요구사항](#2-프로젝트-요구사항)
+- [3.담당 역할](#3-담당-역할)
+- [4.프로젝트 구조](#4-프로젝트-구조)
+- [5.ERD](#5-erd)
+- [6.API 문서](#6-api-document)
+- [7.프로젝트 스케줄링](#7-프로젝트-스케줄링)
+- [8.협업 규칙](#8-협업-규칙)
 
 ## 1. 개발 기간
 
-`2023.10.31` ~ `2023.11.8` - `#9_days`
+2023.10.31 ~ 2023.11.8  (9 days)
 
 ## 2. 프로젝트 요구사항
 
@@ -91,7 +95,7 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
     </tr>
     <tr>
         <td>장혜리</td>
-        <td></td>
+        <td>데이터 전처리, 데이터 저장, 점심 추천 서비스 구현</td>
     </tr>
     <tr>
         <td>정지원</td>
@@ -202,9 +206,39 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 
 ## 7. 프로젝트 스케줄링
 
-[Github Project](https://github.com/orgs/wanted-quantum-jump/projects/5)에 기능별 issue를 등록하며 프로젝트 개발 일정을 관리하였습니다.
+### [Github Project](https://github.com/orgs/wanted-quantum-jump/projects/5)
 ![image](https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/fa45837d-3362-4eff-901b-e42dc35c8319)
 
-## 8. 협업 규칙
+### [Team Q Notion - 일정관리 ](https://gifted-radiator-a91.notion.site/a0678da1b97a4cc6a3ade58ade37a304?v=d97f2cfce06e4abbb186dabc6d90bf55&pvs=4)
+![image](https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/e8a4282f-3702-4aac-9d47-fe776f6039a9)
 
-[Team Q Notion - 팀 규칙 및 컨벤션](https://www.notion.so/f22c8da6c7e4430a90dffc34b7b7d80c)을 참조해 주세요.
+
+## 8. 협업 규칙
+### Branch Strategy
+- `main`, `develop`, `feature`로 나누어서 진행
+- `feature`는 `이슈번호-기능_이름` 으로 명명
+
+### Commit Convention 
+```
+# 타입 : 제목 형식으로 작성하며 제목은 최대 50글자 정도로만 입력
+# 제목을 아랫줄에 작성, 제목 끝에 마침표 금지, 무엇을 했는지 명확하게 작성
+
+################
+# 본문(추가 설명)을 아랫줄에 작성
+
+################
+# 꼬릿말(footer)을 아랫줄에 작성 (관련된 이슈 번호 등 추가)
+
+################
+# feat : 기능 추가
+# fix : 버그 수정
+# docs : 문서 수정
+# test : 테스트 코드 추가
+# refactor : 코드 리팩토링
+# style : 코드 의미에 영향을 주지 않는 변경사항
+# chore : 빌드 부분 혹은 패키지 매니저 수정사항
+# cicd : CI/CD 관련 설정
+################
+```
+
+기타 규칙은 [Team Q Notion - 팀 규칙 및 컨벤션](https://www.notion.so/f22c8da6c7e4430a90dffc34b7b7d80c)을 참조해 주세요.

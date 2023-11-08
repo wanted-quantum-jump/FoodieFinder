@@ -27,6 +27,7 @@ public class AuthController {
         String[] tokens = authService.login(request);
 
         Map<String, String> response = new HashMap<>();
+      
         response.put("Bearer", tokens[0]);
 
         ResponseCookie refreshToken = ResponseCookie.from("Bearer", tokens[1])
