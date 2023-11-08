@@ -22,4 +22,7 @@ public class Response<T> {
         return new Response<>(HttpStatus.OK, "Success", data);
     }
 
+    public static Response<Void> successVoid() {
+        return new Response<>(HttpStatus.OK, "Success", null);
+    }
 }
