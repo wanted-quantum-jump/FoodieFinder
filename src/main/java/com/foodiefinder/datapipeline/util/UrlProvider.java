@@ -1,4 +1,4 @@
-package com.foodiefinder.datapipeline.util;
+package com.foodiefinder.datapipeline.util.request;
 
 import java.util.Map;
 
