@@ -146,13 +146,13 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 │  │          │      └─repository
 │  │          ├─notification
 │  │          │  ├─dto
-│  │          │  ├─repository
 │  │          │  ├─scheduler
 │  │          │  └─service
 │  │          ├─settings
 │  │          │  ├─controller
 │  │          │  ├─dto
 │  │          │  ├─entity
+│  │          │  ├─repository
 │  │          │  ├─service
 │  │          │  └─valid
 │  │          └─user
@@ -209,7 +209,7 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 ![image](https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/b468a807-76fb-4957-a647-6f23ae79ea0a)
 
 ## 7. API Document
-최신 문서는 [FoodieFinder API Document](https://documenter.getpostman.com/view/13712893/2s9YXiY1Kv)를 참조해 주세요. (추후 spring rest docs로 이전 예정!!!)
+최신 문서는 [FoodieFinder API Document](https://documenter.getpostman.com/view/13712893/2s9YXiY1Kv)를 참조해 주세요.
 
 ## 8. 프로젝트 스케줄링
 
