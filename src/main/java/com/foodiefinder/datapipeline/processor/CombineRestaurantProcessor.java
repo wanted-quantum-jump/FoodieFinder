@@ -23,9 +23,7 @@ public class CombineRestaurantProcessor implements ItemProcessor<String, Combine
         if(!dataPipelineCacheRepository.isResponseCacheExist(item)) {
             List<RawRestaurant> rawRestaurants = rawRestaurantProcessor.process(item);
             List<Restaurant> restaurants = restaurantProcessor.process(rawRestaurants);
-            // Restaurant 캐싱 : 응답이 다르다면 Restaurant 중 변한것만 저장
-            List<Restaurant> updatedRestaurants = dataPipelineCacheRepository.isRestaurantsCacheExist(restaurants);
-            return CombineRestaurantProcessorResultData.of(item, rawRestaurants, updatedRestaurants);
+            return CombineRestaurantProcessorResultData.of(item, rawRestaurants, restaurants);
         }
         return null;
     }
