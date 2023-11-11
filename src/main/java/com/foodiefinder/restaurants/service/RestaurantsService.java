@@ -6,6 +6,9 @@ import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
+import com.foodiefinder.restaurants.cache.RestaurantCacheRepository;
+import com.foodiefinder.restaurants.cache.RestaurantDetailCacheRepository;
+import com.foodiefinder.restaurants.dto.RestaurantCacheResponse;
 import com.foodiefinder.restaurants.dto.RestaurantDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,19 @@ public class RestaurantsService {
     private static final double EARTH_RADIUS_KM = 6371.0;
     private static final String SORT_BY_RATING = "rating";
     private final RestaurantRepository restaurantRepository;
+    private final RestaurantCacheRepository restaurantCacheRepository;
+    private final RestaurantDetailCacheRepository restaurantDetailCacheRepository;
 
+    /**
+     * 맛집 목록 캐싱
+     */
+    public Response<List<RestaurantCacheResponse>> getRestaurantsFromCache(String lat, String lon, double range, String orderBy) {
+        double latitude = Double.parseDouble(lat);
+        double longitude = Double.parseDouble(lon);
+        List<RestaurantCacheResponse> restaurantCacheRespons = restaurantCacheRepository.createRestaurantsCacheResponse(latitude, longitude, range, orderBy);
+
+        return Response.success(restaurantCacheRespons);
+    }
 
     public Response<List<RestaurantDetailResponse>> getRestaurants(String lat, String lon, double range, String orderBy) {
         double latitude = Double.parseDouble(lat);
@@ -68,9 +83,20 @@ public class RestaurantsService {
                 calculateDistance(latitude, longitude, r.getLatitude(), r.getLongitude()));
     }
 
+    /**
+     * 맛집 상세정보 캐싱
+     */
     public Response<RestaurantDetailResponse> getRestaurantDetail(Long restaurantId) {
+
+        RestaurantDetailResponse responseFromCache = restaurantDetailCacheRepository.findByIdFromCache(restaurantId);
+        if (responseFromCache != null) {
+            return Response.success(responseFromCache);
+        }
+
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESTAURANT_NOT_FOUND));
+
+        restaurantDetailCacheRepository.inputRestaurantDetailCache(restaurant);
 
         RestaurantDetailResponse detailResponse = RestaurantDetailResponse.from(restaurant);
         return Response.success(detailResponse);
