@@ -24,7 +24,7 @@ public class DataPipelineRestaurantCacheRepository {
         log.info("Restaurant {} 건 캐싱 시작",restaurantCacheDtoList.size());
         // GEORADIUS 로 같은 위도, 경도 그리고 같은 id 일 때, 리뷰, 카운트가 다르다면 삭제하고 다시 삽입
         RedisConnection connection = cacheUtils.getConnection();
-        connection.openPipeline();
+//        connection.openPipeline();
         List<RestaurantCacheDto> needUpdateRestaurantCacheDtoList = restaurantCacheDtoList.stream()
                 .map(data -> {
                     // 같은 위도, 경도의 데이터 검색
@@ -59,11 +59,13 @@ public class DataPipelineRestaurantCacheRepository {
                 .filter(Objects::nonNull)
                 .toList();
 
-        if (needUpdateRestaurantCacheDtoList.isEmpty()) {
-            connection.closePipeline();
-            connection.close();
-            return;
-        }
+//        if (needUpdateRestaurantCacheDtoList.isEmpty()) {
+//            connection.closePipeline();
+//            connection.close();
+//            return;
+//        }
+
+        connection.openPipeline();
         needUpdateRestaurantCacheDtoList.stream()
                 .forEach(data ->
                         connection.geoCommands()
