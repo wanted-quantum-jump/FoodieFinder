@@ -3,6 +3,7 @@ package com.foodiefinder.restaurants.controller;
 import com.foodiefinder.common.dto.Response;
 import com.foodiefinder.restaurants.dto.RatingRequest;
 import com.foodiefinder.restaurants.dto.RestaurantDetailResponse;
+import com.foodiefinder.restaurants.dto.RestaurantCacheResponse;
 import com.foodiefinder.restaurants.service.RatingService;
 import com.foodiefinder.restaurants.service.RestaurantsService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,15 @@ import java.util.List;
 public class RestaurantsController {
     private final RestaurantsService restaurantsService;
     private final RatingService ratingService;
+
+    @GetMapping("/cache")
+    public Response<List<RestaurantCacheResponse>> getRestaurantsFromCache(
+            @RequestParam(name = "lat", required = true) String lat
+            , @RequestParam(name = "lon", required = true) String lon
+            , @RequestParam(name = "range", defaultValue = "1.0") double range
+            , @RequestParam(name = "orderBy", defaultValue = "distance") String orderBy) {
+        return this.restaurantsService.getRestaurantsFromCache(lat, lon, range, orderBy);
+    }
 
     @GetMapping
     public Response<List<RestaurantDetailResponse>> getRestaurants(

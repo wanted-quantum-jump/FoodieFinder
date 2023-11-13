@@ -9,9 +9,15 @@ import org.springframework.stereotype.Component;
 public class CombineRestaurantWriter implements ItemWriter<CombineRestaurantProcessorResultData> {
 
     private final RestaurantWriter restaurantWriter;
-
+    private final ApiResponseCacheWriter apiResponseCacheWriter;
+    private final RestaurantCacheWriter restaurantCacheWriter;
     @Override
     public void write(CombineRestaurantProcessorResultData input) {
-        restaurantWriter.write(input.getRestaurants());
+        if (input != null) {
+            restaurantWriter.write(input.getRestaurants());
+
+            restaurantCacheWriter.write(input.getRestaurants());
+            apiResponseCacheWriter.write(input.getResponse());
+        }
     }
 }

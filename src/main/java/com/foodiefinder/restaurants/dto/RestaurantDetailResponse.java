@@ -2,12 +2,15 @@ package com.foodiefinder.restaurants.dto;
 
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@NoArgsConstructor
 public class RestaurantDetailResponse {
+    private Long id;
     private String sigunName;
     private String businessPlaceName;
     private String businessStateName;
@@ -21,6 +24,7 @@ public class RestaurantDetailResponse {
     private List<RatingDto> ratings;
 
     public RestaurantDetailResponse(Restaurant restaurant) {
+        this.id = restaurant.getId();
         this.sigunName = restaurant.getSigunName();
         this.businessPlaceName = restaurant.getBusinessPlaceName();
         this.businessStateName = restaurant.getBusinessStateName();
@@ -43,5 +47,4 @@ public class RestaurantDetailResponse {
     public static RestaurantDetailResponse from(Restaurant restaurant) {
         return new RestaurantDetailResponse(restaurant);
     }
-
 }

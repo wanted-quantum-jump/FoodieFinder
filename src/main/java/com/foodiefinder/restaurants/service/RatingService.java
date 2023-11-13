@@ -5,6 +5,7 @@ import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
+import com.foodiefinder.restaurants.cache.RatingCacheRepository;
 import com.foodiefinder.restaurants.dto.RatingRequest;
 import com.foodiefinder.restaurants.entity.Rating;
 import com.foodiefinder.restaurants.entity.RatingRepository;
@@ -22,12 +23,18 @@ public class RatingService {
     private final RatingRepository ratingRepository;
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
+    private final RatingCacheRepository ratingCacheRepository;
 
+    /**
+     * 맛집 평가 캐시 정보 동기화
+     */
     public Response<Void> createRating(Long restaurantId, RatingRequest dto) {
         Restaurant restaurant = getRestaurantById(restaurantId);
         User user = getUserById(dto.getUserId());
         createAndSaveRating(user, restaurant, dto);
         updateRestaurantWithAverageRating(restaurant, restaurantId);
+        
+        ratingCacheRepository.inputRatingCache(restaurant);
 
         return Response.successVoid();
     }

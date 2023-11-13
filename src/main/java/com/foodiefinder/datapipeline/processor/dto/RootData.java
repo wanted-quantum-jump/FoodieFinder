@@ -24,7 +24,6 @@ public class RootData {
             "Genrestrtfastfood",
             "Genrestrtsash",
             "Genrestrtbuff",
-            "Resrestrtfodtuck",
             "Genrestrtfugu",
             "Genrestrtstandpub",
             "Genrestrttratearm",

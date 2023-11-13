@@ -23,9 +23,9 @@ public class ChunkOrientedStep<I, O> implements Step{
                     itemReader.update();
                 }
             } else {
-                itemReader.update();
                 O processOutput = itemProcessor.process(readInput);
                 itemWriter.write(processOutput);
+                itemReader.update();
             }
         }
         itemReader.close();
