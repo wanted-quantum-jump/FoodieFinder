@@ -5,7 +5,6 @@ import com.foodiefinder.common.enums.CacheKeyPrefix;
 import com.foodiefinder.datapipeline.writer.dto.RestaurantCacheDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
