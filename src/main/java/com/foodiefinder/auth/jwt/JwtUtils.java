@@ -82,7 +82,7 @@ public class JwtUtils {
             String account = Jwts.parser().setSigningKey(refreshSecretKey).parseClaimsJws(refreshToken).getBody().get("account", String.class);
 
             if (account == null || account.isEmpty()) {
-                throw new CustomException(ErrorCode.INVALID_TOKEN)
+                throw new CustomException(ErrorCode.INVALID_TOKEN);
             } else {
                 Claims accessClaims = Jwts.claims();
                 accessClaims.put("type", ACCESS_TOKEN);

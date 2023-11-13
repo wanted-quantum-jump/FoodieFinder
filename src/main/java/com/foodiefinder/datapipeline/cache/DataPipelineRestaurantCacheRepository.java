@@ -5,6 +5,7 @@ import com.foodiefinder.common.enums.CacheKeyPrefix;
 import com.foodiefinder.datapipeline.writer.dto.RestaurantCacheDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 @Slf4j
 @Repository
@@ -24,46 +26,54 @@ public class DataPipelineRestaurantCacheRepository {
         log.info("Restaurant {} 건 캐싱 시작",restaurantCacheDtoList.size());
         // GEORADIUS 로 같은 위도, 경도 그리고 같은 id 일 때, 리뷰, 카운트가 다르다면 삭제하고 다시 삽입
         RedisConnection connection = cacheUtils.getConnection();
-//        connection.openPipeline();
-        List<RestaurantCacheDto> needUpdateRestaurantCacheDtoList = restaurantCacheDtoList.stream()
-                .map(data -> {
-                    // 같은 위도, 경도의 데이터 검색
-                    GeoResults<RedisGeoCommands.GeoLocation<byte[]>> radiusResult = connection.geoCommands()
-                            .geoRadius(
-                                    (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + data.getSigunName()).getBytes(),
-                                    cacheUtils.getCircle(data.getLatitude(), data.getLongitude(), 0.01, Metrics.KILOMETERS),
-                                    RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs().sortAscending()
-                            );
-                    
-                    if (radiusResult == null) {
-                        return data;
+        connection.openPipeline();
+        restaurantCacheDtoList.stream()
+                .forEach(data ->
+                        connection.geoCommands()
+                                .geoRadius(
+                                        (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + data.getSigunName()).getBytes(),
+                                        cacheUtils.getCircle(data.getLatitude(), data.getLongitude(), 0.01, Metrics.KILOMETERS),
+                                        RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs().sortAscending()
+                                )
+                );
+        List<Object> geoResultsList = connection.closePipeline();
+
+        connection.openPipeline();
+        List<RestaurantCacheDto> needUpdateRestaurantCacheDtoList = IntStream.range(0, geoResultsList.size())
+                .mapToObj(index -> {
+                    GeoResults<RedisGeoCommands.GeoLocation<byte[]>> geoResults = (GeoResults<RedisGeoCommands.GeoLocation<byte[]>>) geoResultsList.get(index);
+
+                    if (geoResults.getContent().isEmpty()) {
+                        return restaurantCacheDtoList.get(index);
                     }
 
-                    String member = radiusResult.getContent().stream()
-                            .map(map -> cacheUtils.decodeFromByteArray(map.getContent().getName()))
-                            .filter(filter -> filter.split(":")[0].equals(String.valueOf(data.getId())))
-                            .toList().get(0);
+                    boolean exists = geoResults.getContent().stream()
+                            .anyMatch(data -> {
+                                String member = cacheUtils.decodeFromByteArray(data.getContent().getName());
+                                return restaurantCacheDtoList.get(index).toString().equals(member);
+                            });
 
-                    if (member.equals(data.toString())) {
+                    if (exists) {
                         return null;
-                    }
-                    else {
+                    } else {
+                        RestaurantCacheDto restaurantCacheDto = restaurantCacheDtoList.get(index);
                         connection.zSetCommands()
                                 .zRem(
-                                        (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + data.toString()).getBytes(),
-                                        data.toString().getBytes()
+                                        (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
+                                        restaurantCacheDto.toString().getBytes()
                                 );
-                        return data;
+                        return restaurantCacheDtoList.get(index);
                     }
                 })
                 .filter(Objects::nonNull)
                 .toList();
+        connection.closePipeline();
 
-//        if (needUpdateRestaurantCacheDtoList.isEmpty()) {
-//            connection.closePipeline();
-//            connection.close();
-//            return;
-//        }
+        if (needUpdateRestaurantCacheDtoList.isEmpty()) {
+            connection.close();
+            log.info("Restaurant 캐싱 종료. 모두 최신 내용 입니다.");
+            return;
+        }
 
         connection.openPipeline();
         needUpdateRestaurantCacheDtoList.stream()
