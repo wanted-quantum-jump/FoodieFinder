@@ -12,7 +12,6 @@ import com.foodiefinder.user.repository.UserRepository;
 import com.foodiefinder.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,11 +22,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class,
         excludeFilters = {
@@ -63,8 +63,8 @@ class UserControllerTest {
         String json = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post("/api/users/signup").with(csrf())
-                .content(json)
-                .contentType(APPLICATION_JSON))
+                        .content(json)
+                        .contentType(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated());
 
@@ -86,8 +86,8 @@ class UserControllerTest {
         String json = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post("/api/users/signup").with(csrf())
-                .content(json)
-                .contentType(APPLICATION_JSON))
+                        .content(json)
+                        .contentType(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
@@ -104,19 +104,17 @@ class UserControllerTest {
                 .account("testAccount")
                 .latitude("123")
                 .longitude("456")
-                .lunchRecommendationEnabled(false)
                 .build();
 
         given(userService.getUserDetail(1L)).willReturn(response);
 
         mockMvc.perform(get("/api/users/1")
-                .contentType(APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.account").value("testAccount"))
                 .andExpect(jsonPath("$.latitude").value("123"))
                 .andExpect(jsonPath("$.longitude").value("456"))
-                .andExpect(jsonPath("$.lunchRecommendationEnabled").value("false"))
                 .andDo(print());
 
         verify(userService, times(1)).getUserDetail(1L);
@@ -130,15 +128,14 @@ class UserControllerTest {
         UserInfoUpdateRequest request = UserInfoUpdateRequest.builder()
                 .latitude("123")
                 .longitude("456")
-                .lunchRecommendationEnabled(true)
                 .build();
 
         Long userId = 1L;
         String json = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(patch("/api/users/" + userId).with(csrf())
-                .contentType(APPLICATION_JSON)
-                .content(json))
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
                 .andExpect(status().isNoContent())
                 .andDo(print());
     }

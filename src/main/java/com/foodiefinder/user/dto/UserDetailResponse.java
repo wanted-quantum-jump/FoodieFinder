@@ -12,14 +12,12 @@ public class UserDetailResponse {
     private String account;
     private String latitude;
     private String longitude;
-    private boolean lunchRecommendationEnabled;
 
     @Builder
-    public UserDetailResponse(Long id, String account, String latitude, String longitude, boolean lunchRecommendationEnabled) {
+    public UserDetailResponse(Long id, String account, String latitude, String longitude) {
         this.id = id;
         this.account = account;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.lunchRecommendationEnabled = lunchRecommendationEnabled;
     }
 }

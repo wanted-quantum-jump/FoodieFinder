@@ -10,7 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 
 @RepositoryUnitTest
-@DisplayName("단위 테스트 - RawRestaurantRepository")
+@DisplayName("단위테스트 - RawRestaurantRepository")
 class RawRestaurantRepositoryTest {
 
     @Autowired
@@ -40,7 +40,7 @@ class RawRestaurantRepositoryTest {
     }
 
     @Test
-    @DisplayName("유니크 제약조건 : 가게이름 + 도로명 주소와 유니크 제약조건 위반 ")
+    @DisplayName("유니크 제약조건 : {가게이름 ,도로명 주소} 유니크 제약조건 위반 ")
     void checkUnique() {
         //given
         String SAME_ROADADDR = "경기도 화성시 반월동 869 (111호)";

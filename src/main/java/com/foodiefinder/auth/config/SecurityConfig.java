@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                     .requestMatchers(HttpMethod.POST, "/api/users/signup").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/users/login").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/users/refresh").permitAll()
                 .anyRequest().authenticated()
                 )
                 //csrf(사이즈간 위조 요청) 설정 꺼놈 ->rest api는 stateless하기 떄문에 인증정보를 보관하지 않기 때문- token방식 사용

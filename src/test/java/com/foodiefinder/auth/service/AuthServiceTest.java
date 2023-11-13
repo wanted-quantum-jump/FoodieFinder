@@ -11,14 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,7 +40,7 @@ class AuthServiceTest {
         String account = "testAccount";
         String password = "password123";
         String encodedPassword = "encodedPassword123";
-        String token = "mocked-token";
+        String[] tokens = new String[]{"access-token", "refresh-token"};
 
         UserLoginRequest request = UserLoginRequest.builder()
                 .account(account)
@@ -58,13 +55,14 @@ class AuthServiceTest {
         //given
         when(userRepository.findByAccount(account)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true);
-        when(jwtUtils.generateToken(account)).thenReturn(token);
+        when(jwtUtils.generateToken(account)).thenReturn(tokens);
 
         //when
-        String result = authService.login(request);
+        String[] result = authService.login(request);
 
         //then
-        assertEquals(token, result);
+        assertEquals(tokens[0], result[0]);
+        assertEquals(tokens[1], result[1]);
     }
 
     @DisplayName("로그인 시 유저 못찾음")
@@ -108,5 +106,19 @@ class AuthServiceTest {
 
         //then
         assertThrows(CustomException.class, () -> authService.login(request));
+    }
+
+    @DisplayName("토큰 재발급")
+    @Test
+    void issueNewAccessToken() {
+
+        String refreshToken = "refresh-token";
+        String newAccessToken = "new-access-token";
+
+        when(jwtUtils.verifyRefreshTokenAndReissue(refreshToken)).thenReturn(newAccessToken);
+
+        String result = authService.issueRefreshToken(refreshToken);
+
+        assertEquals(newAccessToken, result);
     }
 }

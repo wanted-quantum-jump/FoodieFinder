@@ -10,16 +10,17 @@
 <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/Spring Data JPA-gray?style=for-the-badge&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/Junit-25A162?style=for-the-badge&logo=JUnit5&logoColor=white"/></a>
-    
+</div>
+<div align="center">
 <img src="https://img.shields.io/badge/MySQL 8-4479A1?style=for-the-badge&logo=MySQL&logoColor=white"/></a>
 <img src="https://img.shields.io/static/v1?style=for-the-badge&message=Redis&color=DC382D&logo=Redis&logoColor=FFFFFF&label=" alt="Redis">
 <img src="https://img.shields.io/static/v1?style=for-the-badge&message=Amazon+EC2&color=222222&logo=Amazon+EC2&logoColor=FF9900&label=" alt="Amazon EC2">
 <img src="https://img.shields.io/static/v1?style=for-the-badge&message=Amazon+RDS&color=527FFF&logo=Amazon+RDS&logoColor=FFFFFF&label=" alt="Amazon RDS">
-
+</div>
+<div align="center">
 <img src="https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/Notion-FFFFFF?style=for-the-badge&logo=Notion&logoColor=black"/></a>
 <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
-
 </div>
 
 <br>
@@ -51,8 +52,15 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 
 
 ## 0. 목차
-
-
+- [1.개발 기간](#1-개발-기간)
+- [2.프로젝트 요구사항](#2-프로젝트-요구사항)
+- [3.담당 역할](#3-담당-역할)
+- [4.프로젝트 구조](#4-프로젝트-구조)
+- [5.ERD](#5-erd)
+- [6.동작예시](#6-동작예시)
+- [7.API 문서](#7-api-document)
+- [8.프로젝트 스케줄링](#8-프로젝트-스케줄링)
+- [9.협업 규칙](#9-협업-규칙)
 
 ## 1. 개발 기간
 
@@ -80,19 +88,19 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 <table>
     <tr>
         <td>김서윤</td>
-        <td></td>
+        <td>시군구, 맛집 목록, 맛집 상세정보, 평가 API 구현</td>
     </tr>
     <tr>
         <td>방성원</td>
-        <td></td>
+        <td>데이터 수집, 데이터 전처리, 자동화 구현 및 Redis 캐싱</td>
     </tr>
     <tr>
         <td>장혜리</td>
-        <td></td>
+        <td>데이터 전처리, 데이터 저장, 점심 추천 서비스 구현</td>
     </tr>
     <tr>
         <td>정지원</td>
-        <td></td>
+        <td>사용자 관련 서비스 및 인증, 인가 구현</td>
     </tr>
 </table>
 
@@ -138,13 +146,13 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 │  │          │      └─repository
 │  │          ├─notification
 │  │          │  ├─dto
-│  │          │  ├─repository
 │  │          │  ├─scheduler
 │  │          │  └─service
 │  │          ├─settings
 │  │          │  ├─controller
 │  │          │  ├─dto
 │  │          │  ├─entity
+│  │          │  ├─repository
 │  │          │  ├─service
 │  │          │  └─valid
 │  │          └─user
@@ -195,9 +203,15 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 
 </details>
 
-## 6. API Document
+## 6. 동작예시
+디스코드 점심 추천 서비스 예시
 
-## 7. 프로젝트 스케줄링
+![image](https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/b468a807-76fb-4957-a647-6f23ae79ea0a)
+
+## 7. API Document
+최신 문서는 [FoodieFinder API Document](https://documenter.getpostman.com/view/13712893/2s9YXiY1Kv)를 참조해 주세요.
+
+## 8. 프로젝트 스케줄링
 
 ### [Github Project](https://github.com/orgs/wanted-quantum-jump/projects/5)
 ![image](https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/fa45837d-3362-4eff-901b-e42dc35c8319)
@@ -206,7 +220,7 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 ![image](https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/e8a4282f-3702-4aac-9d47-fe776f6039a9)
 
 
-## 8. 협업 규칙
+## 9. 협업 규칙
 ### Branch Strategy
 - `main`, `develop`, `feature`로 나누어서 진행
 - `feature`는 `이슈번호-기능_이름` 으로 명명

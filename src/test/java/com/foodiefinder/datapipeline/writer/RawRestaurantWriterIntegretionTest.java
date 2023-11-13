@@ -100,20 +100,6 @@ class RawRestaurantWriterIntegretionTest {
                 ]
             }""";
 
-    @Test
-    void write() {
-        //given
-        RootData rootData = RootData.of(jsonString);
-        List<RawRestaurant> restaurantList = rootData.toEntityList();
-
-        //when
-        List<RawRestaurant> rawRestaurants = rawRestaurantRepository.saveAll(restaurantList);
-
-        for (RawRestaurant r : rawRestaurants) {
-            log.info("id = {}", r.getId());
-        }
-    }
-
 
     @Test
     @DisplayName("요구사항 : 데이터를 중복 저장 시도할 경우 무시")

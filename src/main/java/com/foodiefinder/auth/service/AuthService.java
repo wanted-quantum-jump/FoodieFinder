@@ -17,7 +17,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
-    public String login(UserLoginRequest request) {
+    public String[] login(UserLoginRequest request) {
 
         //중첩 람다 -> db 조회 1번
         userRepository.findByAccount(request.getAccount()).
@@ -33,4 +33,8 @@ public class AuthService {
         return jwtUtils.generateToken(request.getAccount());
     }
 
+    public String issueRefreshToken(String refreshToken) {
+
+        return jwtUtils.verifyRefreshTokenAndReissue(refreshToken);
+    }
 }

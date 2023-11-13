@@ -8,6 +8,7 @@ import com.foodiefinder.auth.jwt.JwtUtils;
 import com.foodiefinder.auth.service.AuthService;
 import com.foodiefinder.user.controller.UserController;
 import com.foodiefinder.user.dto.UserSignupRequest;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = AuthController.class,
         excludeFilters = {
@@ -64,14 +64,17 @@ class AuthControllerTest {
                 .password("password123!!")
                 .build();
 
-        given(authService.login(any(UserLoginRequest.class))).willReturn("mocked-token");
+        String[] returnData = new String[]{"access-token", "refresh-token"};
+
+        given(authService.login(any(UserLoginRequest.class))).willReturn(returnData);
 
         mockMvc.perform(post("/api/users/login").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"token\":\"mocked-token\"}"));
+                .andExpect(content().json("{\"Bearer\":\"access-token\"}")) //응답 액세스토큰
+                .andExpect(cookie().value("Bearer", "refresh-token")); //쿠키 리프레시토큰
     }
 
     @DisplayName("인증, 인가가 필요한 URL 테스트")
@@ -85,5 +88,24 @@ class AuthControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("user"));
+
     }
+
+    @DisplayName("새로운 액세스 토큰 발급")
+    @WithMockUser
+    @Test
+    void issueRefreshToken() throws Exception{
+
+        String refreshToken = "refresh-token";
+        String newAccessToken = "new-access-token";
+
+        given(authService.issueRefreshToken(refreshToken)).willReturn(newAccessToken);
+
+        mockMvc.perform(post("/api/users/refresh").with(csrf())
+                    .cookie(new Cookie("Bearer", refreshToken)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"Bearer\":\"new-access-token\"}"));
+    }
+
 }
