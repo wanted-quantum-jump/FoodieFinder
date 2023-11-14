@@ -71,13 +71,16 @@ public class DataPipelineRestaurantCacheRepository {
     }
 
 
-
-
     public List<RestaurantCacheDto> needModifyRestaurantCacheDtoList(
             List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> geoResultsList,
             List<RestaurantCacheDto> restaurantCacheDtoList) {
         try (RedisConnection connection = cacheUtils.getConnection()) {
 
+            /**
+             * 업데이트를 하기위해 삭제할 리스트를 만든 이유는 다음과 같다.
+             * DB의 내용과 캐시의 내용이 다를 때 오래된 캐시를 삭제 할 필요가 있다.
+             * @see #inputRestaurantCache(List) 에서 삭제 안하고 넣어도 업데이트 된 값은 들어가게 되지만, 이전의 내용은 그대로 남아있어 데이터가 중복된다.
+             */
             List<RestaurantCacheDto> needDeleteForUpdateRestaurantCacheDtoList = new ArrayList<>();
             List<RestaurantCacheDto> needAddRestaurantDtoList = new ArrayList<>(IntStream.range(0, geoResultsList.size())
                     .mapToObj(index ->
