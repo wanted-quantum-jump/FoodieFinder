@@ -1,6 +1,6 @@
 package com.foodiefinder.datapipeline.writer;
 
-import com.foodiefinder.datapipeline.cache.DataPipelineSggCacheRepository;
+import com.foodiefinder.datapipeline.cache.SggCacheRepository;
 import com.foodiefinder.datapipeline.processor.SggProcessor;
 import com.foodiefinder.datapipeline.writer.entity.Sgg;
 import jakarta.annotation.PostConstruct;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SggCacheWriter implements ItemWriter<String>{
     private final SggProcessor sggProcessor;
-    private final DataPipelineSggCacheRepository dataPipelineSggCacheRepository;
+    private final SggCacheRepository sggCacheRepository;
 
     @PostConstruct
     public void init() {
@@ -28,6 +28,6 @@ public class SggCacheWriter implements ItemWriter<String>{
     @Override
     public void write(String input) {
         List<Sgg> sggList = sggProcessor.process("sgg_lat_lon.csv");
-        dataPipelineSggCacheRepository.inputSggCache(sggList);
+        sggCacheRepository.inputSggCache(sggList);
     }
 }

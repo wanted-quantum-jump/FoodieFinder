@@ -2,7 +2,7 @@ package com.foodiefinder.restaurants.cache;
 
 import com.foodiefinder.common.cache.CacheUtils;
 import com.foodiefinder.common.enums.CacheKeyPrefix;
-import com.foodiefinder.datapipeline.cache.DataPipelineSggCacheRepository;
+import com.foodiefinder.datapipeline.cache.SggCacheRepository;
 import com.foodiefinder.restaurants.dto.RestaurantCacheResponse;
 import com.foodiefinder.restaurants.enums.RestaurantSortOption;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class RestaurantCacheSearchRepository {
     private final CacheUtils cacheUtils;
-    private final DataPipelineSggCacheRepository sggCacheRepository;
+    private final SggCacheRepository sggCacheRepository;
 
 
     /**

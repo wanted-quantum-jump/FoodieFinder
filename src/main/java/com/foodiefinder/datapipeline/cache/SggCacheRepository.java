@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class DataPipelineSggCacheRepository {
+public class SggCacheRepository {
     private final CacheUtils cacheUtils;
     /**
      * Sgg 데이터 Redis 에 저장, csv 는 "경기", "충청
