@@ -16,7 +16,6 @@ import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Repository
@@ -36,11 +35,9 @@ public class RestaurantCacheForModifyRatingRepository {
                 geoResults.getContent()
                         .stream()
                         .filter(data -> isGeoResultContentMatchRestaurantId(data, restaurantCacheDto))
-                        .forEach(data -> {
-                            executeZRemMapRestaurantCacheDto(
-                                    connection, data, restaurantCacheDto
-                            );
-                        });
+                        .forEach(data -> executeZRemMapRestaurantCacheDto(
+                                connection, data, restaurantCacheDto
+                        ));
             }
 
             executeGeoAddRestaurantCacheDto(connection, restaurantCacheDto);

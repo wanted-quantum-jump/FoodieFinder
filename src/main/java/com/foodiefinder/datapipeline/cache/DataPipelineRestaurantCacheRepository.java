@@ -42,7 +42,7 @@ public class DataPipelineRestaurantCacheRepository {
 
     private List<Object> executeGeoRadiusPipelineByRestaurantCacheDtoList(RedisConnection connection, List<RestaurantCacheDto> restaurantCacheDtoList) {
         connection.openPipeline();
-        restaurantCacheDtoList.stream()
+        restaurantCacheDtoList
                 .forEach(data ->
                         connection.geoCommands()
                                 .geoRadius(
@@ -113,7 +113,7 @@ public class DataPipelineRestaurantCacheRepository {
             RedisConnection connection,
             List<RestaurantCacheDto> restaurantCacheDtoList) {
         connection.openPipeline();
-        restaurantCacheDtoList.stream().forEach(restaurantCacheDto ->
+        restaurantCacheDtoList.forEach(restaurantCacheDto ->
                 connection.zSetCommands()
                         .zRem(
                                 (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
@@ -134,7 +134,7 @@ public class DataPipelineRestaurantCacheRepository {
         log.info("Restaurant {} 건 캐싱 시작",restaurantCacheDtoList.size());
         try(RedisConnection connection = cacheUtils.getConnection()) {
             connection.openPipeline(); // 분리
-            restaurantCacheDtoList.stream()
+            restaurantCacheDtoList
                     .forEach(data ->
                             connection.geoCommands()
                                     .geoAdd(
