@@ -3,6 +3,7 @@ package com.foodiefinder.datapipeline.cache;
 import com.foodiefinder.common.cache.CacheUtils;
 import com.foodiefinder.common.enums.CacheKeyPrefix;
 import com.foodiefinder.datapipeline.util.hash.HashGenerator;
+import jakarta.persistence.Cacheable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -23,17 +24,9 @@ public class DataPipelineApiResponseCacheRepository {
      * @return 존재 여부
      */
     public boolean hasResponseCache(String response) {
-        byte[] hash = (CacheKeyPrefix.DATAPIPELINE_RESPONSE.getKeyPrefix() +
-                HashGenerator.calculateSHA256(response)).getBytes();
+        byte[] responseHash = getHash(response);
         RedisConnection connection = cacheUtils.getConnection();
-        boolean isExist = connection.stringCommands().get(hash) != null;
-
-        if(isExist){
-            connection.stringCommands()
-                    .set(hash, "true".getBytes(),
-                            Expiration.seconds(RESPONSE_EXPIRE_TIME),
-                            RedisStringCommands.SetOption.UPSERT);
-        }
+        boolean isExist = connection.stringCommands().get(responseHash) != null;
         connection.close();
         return isExist;
     }
@@ -45,15 +38,24 @@ public class DataPipelineApiResponseCacheRepository {
      */
     public boolean inputResponseCache(String response) {
         log.info("Response 해시, 캐싱 시작");
-        byte[] hash = (CacheKeyPrefix.DATAPIPELINE_RESPONSE.getKeyPrefix() +
-                HashGenerator.calculateSHA256(response)).getBytes();
+        byte[] responseHash = getHash(response);
         RedisConnection connection = cacheUtils.getConnection();
         boolean set = connection.stringCommands()
-                .set(hash, "true".getBytes(),
+                .set(responseHash, "true".getBytes(),
                         Expiration.seconds(RESPONSE_EXPIRE_TIME),
                         RedisStringCommands.SetOption.UPSERT);
         connection.close();
         log.info("Response 해시, 캐싱 완료");
         return set;
+    }
+
+    /**
+     * 해시 값 생성
+     * @param response response 의 문자열
+     * @return 변환된 해시 값
+     */
+    private byte[] getHash(String response) {
+        return (CacheKeyPrefix.DATAPIPELINE_RESPONSE.getKeyPrefix() +
+                HashGenerator.calculateSHA256(response)).getBytes();
     }
 }

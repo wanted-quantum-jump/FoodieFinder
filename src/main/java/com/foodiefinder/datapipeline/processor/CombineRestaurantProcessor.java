@@ -25,6 +25,10 @@ public class CombineRestaurantProcessor implements ItemProcessor<String, Combine
             List<Restaurant> restaurants = restaurantProcessor.process(rawRestaurants);
             return CombineRestaurantProcessorResultData.of(item, rawRestaurants, restaurants);
         }
-        return null;
+        else{
+            // 캐시에 있다면, 내용 업데이트
+            dataPipelineApiResponseCacheRepository.inputResponseCache(item);
+            return null;
+        }
     }
 }
