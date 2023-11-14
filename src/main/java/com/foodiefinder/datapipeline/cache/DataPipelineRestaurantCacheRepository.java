@@ -31,7 +31,7 @@ public class DataPipelineRestaurantCacheRepository {
 
             List<Object> closePipelineObjectResultList = executeGeoRadiusPipelineByRestaurantCacheDtoList(connection, restaurantCacheDtoList);
 
-            return toGeoResultsList(closePipelineObjectResultList);
+            return cacheUtils.toGeoResultsList(closePipelineObjectResultList);
         } catch (ClassCastException e){
             log.error("GeoResults 캐스팅에 실패 하였습니다.");
         }
@@ -52,22 +52,6 @@ public class DataPipelineRestaurantCacheRepository {
                                 )
                 );
         return connection.closePipeline();
-    }
-
-    /**
-     * GeoRadius 명령어등 등 GeoResults 를 리턴하는 명령을 파이프라인으로 여러번 사용 후 받은 결과에 대해서만 사용할 것
-     */
-    private List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> toGeoResultsList(List<Object> objectList) {
-        List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> geoResultsList = new ArrayList<>();
-
-        for (Object objectResult : objectList) {
-            if (objectResult instanceof GeoResults) {
-                @SuppressWarnings("unchecked")
-                GeoResults<RedisGeoCommands.GeoLocation<byte[]>> geoResults = (GeoResults<RedisGeoCommands.GeoLocation<byte[]>>) objectResult;
-                geoResultsList.add(geoResults);
-            }
-        }
-        return geoResultsList;
     }
 
 

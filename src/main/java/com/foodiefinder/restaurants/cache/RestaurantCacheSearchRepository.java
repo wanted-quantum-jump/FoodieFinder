@@ -32,7 +32,7 @@ public class RestaurantCacheSearchRepository {
 
             List<Object> nearRestaurantSggResult = executeGeoRadiusPipelineByNearSggList(connection, nearSGGList, latitude, longitude, range);
 
-            List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> geoResultsList = toGeoResultsList(nearRestaurantSggResult);
+            List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> geoResultsList = cacheUtils.toGeoResultsList(nearRestaurantSggResult);
 
             List<RestaurantCacheResponse> sggLists = createRestaurantCacheResponseList(geoResultsList);
 
@@ -55,23 +55,6 @@ public class RestaurantCacheSearchRepository {
                     return RestaurantCacheResponse.fromCache(id, rating, reviewCount, businessPlaceName, sanitationBusinessCondition, distance);
                 })
                 .toList();
-    }
-
-
-    /**
-     * GeoRadius 명령어등 등 GeoResults 를 리턴하는 명령을 파이프라인으로 여러번 사용 후 받은 결과에 대해서만 사용할 것
-     */
-    private List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> toGeoResultsList(List<Object> objectList) {
-        List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> geoResultsList = new ArrayList<>();
-
-        for (Object objectResult : objectList) {
-            if (objectResult instanceof GeoResults) {
-                @SuppressWarnings("unchecked")
-                GeoResults<RedisGeoCommands.GeoLocation<byte[]>> geoResults = (GeoResults<RedisGeoCommands.GeoLocation<byte[]>>) objectResult;
-                geoResultsList.add(geoResults);
-            }
-        }
-        return geoResultsList;
     }
 
     private List<Object> executeGeoRadiusPipelineByNearSggList(RedisConnection connection,
