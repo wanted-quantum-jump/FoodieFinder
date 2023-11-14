@@ -34,7 +34,7 @@ public class RestaurantsService {
     public Response<List<RestaurantCacheResponse>> getRestaurantsFromCache(String lat, String lon, double range, String orderBy) {
         double latitude = Double.parseDouble(lat);
         double longitude = Double.parseDouble(lon);
-        List<RestaurantCacheResponse> restaurantCacheResponse = restaurantCacheSearchRepository.findRestaurantCache(latitude, longitude, range, orderBy);
+        List<RestaurantCacheResponse> restaurantCacheResponse = restaurantCacheSearchRepository.findAllRestaurantCache(latitude, longitude, range, orderBy);
 
         return Response.success(restaurantCacheResponse);
     }

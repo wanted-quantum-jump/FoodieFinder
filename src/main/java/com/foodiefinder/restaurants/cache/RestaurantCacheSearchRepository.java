@@ -13,16 +13,12 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Geo 사용
- * key = 지역:
- * lon/lat = lon/lat
- * member = id
- */
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -30,40 +26,22 @@ public class RestaurantCacheSearchRepository {
     private final CacheUtils cacheUtils;
     private final SggCacheRepository sggCacheRepository;
 
+    public List<RestaurantCacheResponse> findAllRestaurantCache(double latitude, double longitude, double range, String orderBy) {
+        try(RedisConnection connection = cacheUtils.getConnection()) {
+            List<String> nearSGGList = sggCacheRepository.findNearSGG(connection, latitude, longitude);
 
-    /**
-     * 위치 정보를 받아, Redis 에서 거리, 평점, 리뷰 수 순으로 리스트를 받을 수 있다.
-     * @param latitude  위도
-     * @param longitude 경도
-     * @param range     범위
-     * @param orderBy   rating, distance, review
-     * @return orderBy 에 의해 정렬된 RestaurantCacheResponse 출력
-     */
-    public List<RestaurantCacheResponse> findRestaurantCache(double latitude, double longitude, double range, String orderBy) {
-        RedisConnection connection = cacheUtils.getConnection();
-        List<String> nearSGGList = sggCacheRepository.findNearSGG(connection, latitude, longitude);
+            List<Object> nearRestaurantSggResult = executeGeoRadiusPipelineByNearSggList(connection, nearSGGList, latitude, longitude, range);
 
-        connection.openPipeline();
-        nearSGGList.stream().forEach(
-                sgg -> {
-                    connection.geoCommands()
-                            .geoRadius(
-                                    (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + sgg).getBytes(),
-                                    cacheUtils.getCircle(latitude, longitude, range, Metrics.KILOMETERS),
-                                    RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs().includeDistance().sortAscending()
-                            );
-                }
-        );
-        List<Object> nearRestaurantSggResult = connection.closePipeline();
-        connection.close();
+            List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> geoResultsList = toGeoResultsList(nearRestaurantSggResult);
 
-        List<RestaurantCacheResponse> sggLists = nearRestaurantSggResult.stream()
-                .map(data -> {
-                    if (data instanceof GeoResults<?>) {
-                        return (GeoResults<RedisGeoCommands.GeoLocation<byte[]>>) data;
-                    }
-                    return null;
-                })
+            List<RestaurantCacheResponse> sggLists = createRestaurantCacheResponseList(geoResultsList);
+
+            return orderRestaurantCacheResponseList(sggLists, orderBy);
+        }
+    }
+
+    private List<RestaurantCacheResponse> createRestaurantCacheResponseList(List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> geoResultsList) {
+        return geoResultsList.stream()
                 .filter(Objects::nonNull)
                 .flatMap(data -> data.getContent().stream())
                 .map(geoResult -> {
@@ -77,27 +55,55 @@ public class RestaurantCacheSearchRepository {
                     return RestaurantCacheResponse.fromCache(id, rating, reviewCount, businessPlaceName, sanitationBusinessCondition, distance);
                 })
                 .toList();
+    }
 
-        /**
-         * 평점, 리뷰, 거리순 정렬
-         */
-        // 평점 높은
+
+    /**
+     * GeoRadius 명령어등 등 GeoResults 를 리턴하는 명령을 파이프라인으로 여러번 사용 후 받은 결과에 대해서만 사용할 것
+     */
+    private List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> toGeoResultsList(List<Object> objectList) {
+        List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> geoResultsList = new ArrayList<>();
+
+        for (Object objectResult : objectList) {
+            if (objectResult instanceof GeoResults) {
+                @SuppressWarnings("unchecked")
+                GeoResults<RedisGeoCommands.GeoLocation<byte[]>> geoResults = (GeoResults<RedisGeoCommands.GeoLocation<byte[]>>) objectResult;
+                geoResultsList.add(geoResults);
+            }
+        }
+        return geoResultsList;
+    }
+
+    private List<Object> executeGeoRadiusPipelineByNearSggList(RedisConnection connection,
+                                                               List<String> nearSGGList,
+                                                               double latitude, double longitude, double range) {
+        connection.openPipeline();
+        nearSGGList.forEach(
+                sgg -> connection.geoCommands()
+                        .geoRadius(
+                                (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + sgg).getBytes(),
+                                cacheUtils.getCircle(latitude, longitude, range, Metrics.KILOMETERS),
+                                RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs().includeDistance().sortAscending()
+                        )
+        );
+        return connection.closePipeline();
+    }
+
+    private List<RestaurantCacheResponse> orderRestaurantCacheResponseList(List<RestaurantCacheResponse> restaurantCacheResponseList, String orderBy) {
         if (orderBy.equals(RestaurantSortOption.RATING.getOption())) {
-            return sggLists.stream()
+            return restaurantCacheResponseList.stream()
                     .sorted(Comparator.comparing(RestaurantCacheResponse::getRating).reversed())
                     .toList();
         }
-        // 리뷰 많은
-        else if (orderBy.equals(RestaurantSortOption.REVIEW_COUNT.getOption())) {
-            return sggLists.stream()
+
+        if (orderBy.equals(RestaurantSortOption.REVIEW_COUNT.getOption())) {
+            return restaurantCacheResponseList.stream()
                     .sorted(Comparator.comparing(RestaurantCacheResponse::getReviewCount).reversed())
                     .toList();
         }
-        // 거리 가까운
-        else {
-            return sggLists.stream()
-                    .sorted(Comparator.comparing(RestaurantCacheResponse::getDistance))
-                    .toList();
-        }
+
+        return restaurantCacheResponseList.stream()
+                .sorted(Comparator.comparing(RestaurantCacheResponse::getDistance))
+                .toList();
     }
 }
