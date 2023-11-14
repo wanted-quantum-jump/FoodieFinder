@@ -20,6 +20,7 @@ import java.util.*;
 public class RestaurantDetailCacheRepository {
     private final CacheUtils cacheUtils;
     private final Long EXPIRE_TIME = 600L;
+    private final String RESTAURANT_DETAIL_CACHE_SUFFIX = ":ratings";
     private List<byte[]> fieldName;
     
     @PostConstruct
@@ -41,12 +42,12 @@ public class RestaurantDetailCacheRepository {
     public RestaurantDetailResponse findByIdFromRestaurantDetailCache(Long restaurantId) {
         try(RedisConnection connection = cacheUtils.getConnection()) {
 
-            List<byte[]> fromCacheRawValue = executeHMGetByRestaurantId(connection, restaurantId);
-
-            if (fromCacheRawValue == null) {
+            if (!hasRestaurantDetailCache(connection, restaurantId)) {
                 log.info("id {} 는 캐시에 없습니다.", restaurantId);
                 return null;
             }
+
+            List<byte[]> fromCacheRawValue = executeHMGetByRestaurantId(connection, restaurantId);
 
             List<String> restaurantDetailCacheValue = toStringList(fromCacheRawValue);
 
@@ -56,23 +57,26 @@ public class RestaurantDetailCacheRepository {
 
             executeModifyExpire(connection, CacheKeyPrefix.RESTAURANT_KEY_PREFIX.getKeyPrefix() + restaurantId);
 
-
-            // 분리
             if (ratingsCacheRawValue != null) {
                 List<RatingDto> ratingDtoList = createRatingDtoList(ratingsCacheRawValue);
 
                 executeModifyExpire(connection,
                         CacheKeyPrefix.RESTAURANT_KEY_PREFIX.getKeyPrefix() +
                                 restaurantId +
-                                ":ratings"
+                                RESTAURANT_DETAIL_CACHE_SUFFIX
                 );
 
                 response.setRatings(ratingDtoList);
             }
 
-            log.info("id {} 캐시에서 조회 성공, 만료 시간 갱신.", restaurantId);
+            log.info("id {} 캐시에서 조회` 성공, 만료 시간 갱신.", restaurantId);
             return response;
         }
+    }
+
+    private boolean hasRestaurantDetailCache(RedisConnection connection, Long restaurantId) {
+        return Boolean.TRUE.equals(connection.keyCommands()
+                .exists((CacheKeyPrefix.RESTAURANT_KEY_PREFIX.getKeyPrefix() + restaurantId).getBytes()));
     }
 
     private List<byte[]> executeHMGetByRestaurantId(RedisConnection connection, Long restaurantId) {
@@ -95,12 +99,8 @@ public class RestaurantDetailCacheRepository {
     private List<String> toStringList(List<byte[]> bytes) {
         return bytes
                 .stream()
-                .map(data -> {
-                    if (data == null) {
-                        return null;
-                    }
-                    return cacheUtils.decodeFromByteArray(data);
-                })
+                .filter(Objects::nonNull)
+                .map(cacheUtils::decodeFromByteArray)
                 .toList();
     }
 
@@ -127,7 +127,7 @@ public class RestaurantDetailCacheRepository {
     private List<byte[]> executeLRangeByRestaurantId(RedisConnection connection, Long restaurantId) {
         return connection.listCommands()
                 .lRange(
-                        (CacheKeyPrefix.RESTAURANT_KEY_PREFIX.getKeyPrefix() + restaurantId + ":ratings").getBytes(),
+                        (CacheKeyPrefix.RESTAURANT_KEY_PREFIX.getKeyPrefix() + restaurantId + RESTAURANT_DETAIL_CACHE_SUFFIX).getBytes(),
                         0, -1
                 );
     }
@@ -144,9 +144,7 @@ public class RestaurantDetailCacheRepository {
 
         ratingsCache.stream()
                 .map(data -> cacheUtils.decodeFromByteArray(data).split(":"))
-                .forEach(data -> {
-                    ratingDtoList.add(new RatingDto(Long.valueOf(data[0]), Integer.parseInt(data[1]), data[2]));
-                });
+                .forEach(data -> ratingDtoList.add(new RatingDto(Long.valueOf(data[0]), Integer.parseInt(data[1]), data[2])));
 
         return ratingDtoList;
     }
@@ -169,7 +167,7 @@ public class RestaurantDetailCacheRepository {
             executeLPushWithPipeline(connection, ratings, restaurant.getId());
 
             executeModifyExpire(connection, CacheKeyPrefix.RESTAURANT_KEY_PREFIX.getKeyPrefix() + restaurant.getId());
-            executeModifyExpire(connection, CacheKeyPrefix.RESTAURANT_KEY_PREFIX.getKeyPrefix() + restaurant.getId() + ":ratings");
+            executeModifyExpire(connection, CacheKeyPrefix.RESTAURANT_KEY_PREFIX.getKeyPrefix() + restaurant.getId() + RESTAURANT_DETAIL_CACHE_SUFFIX);
 
             log.info("id {} 캐시에 저장 완료", restaurant.getId());
         }
@@ -205,13 +203,11 @@ public class RestaurantDetailCacheRepository {
         connection.openPipeline();
         ratings.stream()
                 .map(data -> (data.getUser().getId() + ":" + data.getValue() + ":" + data.getComment()).getBytes())
-                .forEach(data -> {
-                    connection.listCommands()
-                            .lPush(
-                                    (CacheKeyPrefix.RESTAURANT_KEY_PREFIX.getKeyPrefix() + restaurantId + ":ratings").getBytes(),
-                                    data
-                            );
-                });
+                .forEach(data -> connection.listCommands()
+                        .lPush(
+                                (CacheKeyPrefix.RESTAURANT_KEY_PREFIX.getKeyPrefix() + restaurantId + RESTAURANT_DETAIL_CACHE_SUFFIX).getBytes(),
+                                data
+                        ));
         connection.closePipeline();
     }
 }
