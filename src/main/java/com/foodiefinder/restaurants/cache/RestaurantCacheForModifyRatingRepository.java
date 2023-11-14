@@ -96,11 +96,10 @@ public class RestaurantCacheForModifyRatingRepository {
     private RestaurantCacheDto createRestaurantCacheDto(List<Rating> ratings, Restaurant restaurant) {
         return RestaurantCacheDto.setCache(
                 restaurant,
-                sumRatings(ratings),
+                sumRatings(ratings) / ratings.size(),
                 ratings.size()
         );
     }
-
     private Double sumRatings(List<Rating> ratings) {
         return Double.valueOf(ratings.stream()
                 .reduce(0, (total, rating) -> total + rating.getValue(), Integer::sum));
