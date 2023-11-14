@@ -79,10 +79,10 @@ public class DataPipelineRestaurantCacheRepository {
         try (RedisConnection connection = cacheUtils.getConnection()) {
 
             List<RestaurantCacheDto> needDeleteForUpdateRestaurantCacheDtoList = new ArrayList<>();
-            List<RestaurantCacheDto> needAddRestaurantDtoList = IntStream.range(0, geoResultsList.size())
+            List<RestaurantCacheDto> needAddRestaurantDtoList = new ArrayList<>(IntStream.range(0, geoResultsList.size())
                     .mapToObj(index ->
-                            new ImmutablePair<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>,RestaurantCacheDto>
-                                    (geoResultsList.get(index),restaurantCacheDtoList.get(index))
+                            new ImmutablePair<>
+                                    (geoResultsList.get(index), restaurantCacheDtoList.get(index))
                     )
                     .map(pair -> {
                         if (isGeoResultsEmpty(pair.getLeft())) {
@@ -97,7 +97,7 @@ public class DataPipelineRestaurantCacheRepository {
                         return null;
                     })
                     .filter(Objects::nonNull)
-                    .toList();
+                    .toList());
 
             executeZRemPipelineByRestaurantCacheDtoList(connection, needDeleteForUpdateRestaurantCacheDtoList);
             needAddRestaurantDtoList.addAll(needDeleteForUpdateRestaurantCacheDtoList);
