@@ -42,4 +42,15 @@ public class DataPipelineApiResponseCacheRepository {
         return (CacheKeyPrefix.DATAPIPELINE_RESPONSE.getKeyPrefix() +
                 HashGenerator.calculateSHA256(response)).getBytes();
     }
+
+    public void executeModifyExpire(String response) {
+        byte[] responseHash = computeHashForResponse(response);
+
+        try(RedisConnection connection = cacheUtils.getConnection()) {
+            connection.keyCommands()
+                    .expire(responseHash,
+                            RESPONSE_EXPIRE_TIME
+                    );
+        }
+    }
 }
