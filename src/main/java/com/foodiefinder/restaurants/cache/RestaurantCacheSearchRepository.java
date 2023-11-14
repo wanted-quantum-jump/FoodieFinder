@@ -26,7 +26,7 @@ import java.util.Objects;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class RestaurantCacheRepository {
+public class RestaurantCacheSearchRepository {
     private final CacheUtils cacheUtils;
     private final DataPipelineSggCacheRepository sggCacheRepository;
 
