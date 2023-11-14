@@ -38,19 +38,10 @@ public class RestaurantCacheWriter implements ItemWriter<List<Restaurant>> {
                         geoResultsListWithPipelineByRestaurantDtoList,
                         restaurantCacheDtoList);
 
-        if (needUpdateRestaurantCacheDtoList.isEmpty()) {
-            log.info("Restaurant 캐싱 종료. 모두 최신 내용 입니다.");
-            return;
-        }
-
         dataPipelineRestaurantCacheRepository.inputRestaurantCache(needUpdateRestaurantCacheDtoList);
     }
 
-    /**
-     * 상호명, 거리명주소로 Restaurant 를 찾아 캐싱을 하기 위한 RestaurantCacheDto 로 변환
-     * @param restaurant
-     * @return
-     */
+
     private RestaurantCacheDto toRestaurantCacheDto(Restaurant restaurant) {
         Restaurant foundRestaurant = forCacheRestaurantRepository.findByBusinessPlaceNameAndRoadAddress(restaurant.getBusinessPlaceName(), restaurant.getRoadAddress())
                 .orElse(null);
