@@ -2,7 +2,6 @@ package com.foodiefinder.restaurants.cache;
 
 import com.foodiefinder.common.cache.CacheUtils;
 import com.foodiefinder.common.enums.CacheKeyPrefix;
-import com.foodiefinder.datapipeline.cache.DataPipelineSggCacheRepository;
 import com.foodiefinder.datapipeline.writer.dto.RestaurantCacheDto;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.restaurants.entity.Rating;
@@ -23,12 +22,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class RatingCacheRepository {
     private final CacheUtils cacheUtils;
-    private final DataPipelineSggCacheRepository sggCacheRepository;
 
     /**
      * 유저가 평가할떄 redis 와 동기화 하기 위한 메서드
      */
-    public void inputRatingCache(Restaurant restaurant) {
+    public void modifyRatingAtRestaurantCache(Restaurant restaurant) {
         log.info("id {} 에 대한 캐시 동기화",restaurant.getId());
 
         Double latitude = restaurant.getLatitude();

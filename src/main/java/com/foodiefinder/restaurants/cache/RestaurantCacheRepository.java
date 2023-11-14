@@ -39,7 +39,7 @@ public class RestaurantCacheRepository {
      * @param orderBy   rating, distance, review
      * @return orderBy 에 의해 정렬된 RestaurantCacheResponse 출력
      */
-    public List<RestaurantCacheResponse> createRestaurantsCacheResponse(double latitude, double longitude, double range, String orderBy) {
+    public List<RestaurantCacheResponse> findRestaurantCache(double latitude, double longitude, double range, String orderBy) {
         RedisConnection connection = cacheUtils.getConnection();
         List<String> nearSGGList = sggCacheRepository.findNearSGG(connection, latitude, longitude);
 

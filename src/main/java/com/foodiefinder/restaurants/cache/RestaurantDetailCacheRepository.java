@@ -50,7 +50,7 @@ public class RestaurantDetailCacheRepository {
     }
 
     // restaurant:id ex 600
-    public RestaurantDetailResponse findByIdFromCache(Long restaurantId) {
+    public RestaurantDetailResponse findByIdFromRestaurantDetailCache(Long restaurantId) {
         RedisConnection connection = cacheUtils.getConnection();
 
         if (Boolean.FALSE.equals(connection.keyCommands()

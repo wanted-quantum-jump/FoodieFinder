@@ -69,7 +69,7 @@ public class DataPipelineRestaurantCacheRepository {
      * @param restaurantCacheDtoList
      * @return
      */
-    public List<RestaurantCacheDto> needUpdateRestaurantCacheDtoList(
+    public List<RestaurantCacheDto> needModifyRestaurantCacheDtoList(
             List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> geoResultsList,
             List<RestaurantCacheDto> restaurantCacheDtoList) {
 

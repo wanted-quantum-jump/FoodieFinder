@@ -34,7 +34,7 @@ public class RestaurantCacheWriter implements ItemWriter<List<Restaurant>> {
                 dataPipelineRestaurantCacheRepository.findGeoResultsListByRestaurantDtoList(restaurantCacheDtoList);
 
         List<RestaurantCacheDto> needUpdateRestaurantCacheDtoList =
-                dataPipelineRestaurantCacheRepository.needUpdateRestaurantCacheDtoList(
+                dataPipelineRestaurantCacheRepository.needModifyRestaurantCacheDtoList(
                         geoResultsListWithPipelineByRestaurantDtoList,
                         restaurantCacheDtoList);
 

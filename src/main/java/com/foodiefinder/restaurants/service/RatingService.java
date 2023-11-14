@@ -34,7 +34,7 @@ public class RatingService {
         createAndSaveRating(user, restaurant, dto);
         updateRestaurantWithAverageRating(restaurant, restaurantId);
         
-        ratingCacheRepository.inputRatingCache(restaurant);
+        ratingCacheRepository.modifyRatingAtRestaurantCache(restaurant);
 
         return Response.successVoid();
     }
