@@ -41,7 +41,7 @@ public class RestaurantCacheRepository {
      */
     public List<RestaurantCacheResponse> createRestaurantsCacheResponse(double latitude, double longitude, double range, String orderBy) {
         RedisConnection connection = cacheUtils.getConnection();
-        List<String> nearSGGList = sggCacheRepository.findNearSGG(connection, latitude, longitude, range);
+        List<String> nearSGGList = sggCacheRepository.findNearSGG(connection, latitude, longitude);
 
         connection.openPipeline();
         nearSGGList.stream().forEach(

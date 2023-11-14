@@ -43,7 +43,7 @@ public class DataPipelineSggCacheRepository {
         log.info("시군구 데이터 캐싱 종료");
     }
 
-    public List<String> findNearSGG(RedisConnection connection, double latitude, double longitude, double range) {
+    public List<String> findNearSGG(RedisConnection connection, double latitude, double longitude) {
         // 가까운 지역:시군구 찾기
         GeoResults<RedisGeoCommands.GeoLocation<byte[]>> geoResults = connection.geoCommands()
                 .geoRadius(CacheKeyPrefix.MAP_KOREA.getKeyPrefix().getBytes(),

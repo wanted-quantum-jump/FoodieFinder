@@ -40,7 +40,7 @@ public class RatingCacheRepository {
 
         RedisConnection connection = cacheUtils.getConnection();
 
-        List<String> nearSGGList = sggCacheRepository.findNearSGG(connection, latitude, longitude, 1000);
+        List<String> nearSGGList = sggCacheRepository.findNearSGG(connection, latitude, longitude);
 
         nearSGGList.stream()
                 .map(
