@@ -7,6 +7,7 @@ import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.restaurants.entity.Rating;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
@@ -23,63 +24,88 @@ import java.util.Objects;
 public class RestaurantCacheForModifyRatingRepository {
     private final CacheUtils cacheUtils;
 
-
     public void modifyRatingAtRestaurantCache(Restaurant restaurant) {
-        log.info("id {} 에 대한 캐시 동기화",restaurant.getId());
-
-        Double latitude = restaurant.getLatitude();
-        Double longitude = restaurant.getLongitude();
-
-        // 분리
-        List<Rating> ratings = restaurant.getRatings();
-        int count = ratings.size();
-        Double sumRatings = Double.valueOf(ratings.stream()
-                .reduce(0, (total, rating) -> total + rating.getValue(), Integer::sum));
-
-        RestaurantCacheDto restaurantCacheDto = RestaurantCacheDto.setCache(restaurant, sumRatings / count, count);
-
-        
         try (RedisConnection connection = cacheUtils.getConnection()) {
-            // 분리
-            GeoResults<RedisGeoCommands.GeoLocation<byte[]>> geoResults = connection.geoCommands()
-                    .geoRadius(
-                            (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
-                            cacheUtils.getCircle(latitude, longitude, 0.01, Metrics.KILOMETERS)
-                    );
+            log.info("id {} 에 대한 캐시 동기화",restaurant.getId());
 
+            RestaurantCacheDto restaurantCacheDto = createRestaurantCacheDto(restaurant.getRatings(), restaurant);
+
+            GeoResults<RedisGeoCommands.GeoLocation<byte[]>> geoResults = executeGeoRadiusByRestaurantCacheDto(connection, restaurantCacheDto);
             
-            // 분리
-            if(!geoResults.getContent().isEmpty()) {
-
-                // 분리
+            if (hasGeoResult(geoResults)) {
                 geoResults.getContent()
-                    .stream()
-                        .filter(Objects::nonNull)
-                        .filter(data -> Long.valueOf(cacheUtils.decodeFromByteArray(data.getContent().getName()).split(":")[0]).equals(restaurant.getId()))
+                        .stream()
+                        .filter(data -> isGeoResultContentMatchRestaurantId(data, restaurantCacheDto))
                         .forEach(data -> {
-                            connection.zSetCommands()
-                                    .zRem(
-                                            (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
-                                            data.getContent().getName()
-                                    );
-
-                            connection.geoCommands()
-                                    .geoAdd(
-                                            (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
-                                            new Point(longitude, latitude),
-                                            (restaurantCacheDto.toString()).getBytes()
-                                    );
+                            executeZRemMapRestaurantCacheDto(
+                                    connection, data, restaurantCacheDto
+                            );
                         });
-                return;
             }
-            
-            // 분리, 중복 통합
-            connection.geoCommands()
-                    .geoAdd(
-                            (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
-                            new Point(longitude, latitude),
-                            (restaurantCacheDto.toString()).getBytes()
-                    );
+
+            executeGeoAddRestaurantCacheDto(connection, restaurantCacheDto);
+            log.info("id {} 에 대한 캐시 동기화 완료",restaurant.getId());
         }
+    }
+
+    private void executeGeoAddRestaurantCacheDto(
+            RedisConnection connection,
+            RestaurantCacheDto restaurantCacheDto) {
+        connection.geoCommands()
+                .geoAdd(
+                        (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
+                        new Point(restaurantCacheDto.getLongitude(), restaurantCacheDto.getLatitude()),
+                        (restaurantCacheDto.toString()).getBytes()
+                );
+    }
+
+    private void executeZRemMapRestaurantCacheDto(
+            RedisConnection connection,
+            GeoResult<RedisGeoCommands.GeoLocation<byte[]>> geoLocation,
+            RestaurantCacheDto restaurantCacheDto
+    ) {
+        connection.zSetCommands()
+                .zRem(
+                        (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
+                        geoLocation.getContent().getName()
+                );
+    }
+
+    private boolean isGeoResultContentMatchRestaurantId(
+            GeoResult<RedisGeoCommands.GeoLocation<byte[]>> geoLocation,
+            RestaurantCacheDto restaurantCacheDto) {
+        return Long.valueOf(cacheUtils.decodeFromByteArray(geoLocation.getContent().getName()).split(":")[0]).equals(restaurantCacheDto.getId());
+    }
+
+    private boolean hasGeoResult(GeoResults<?> geoResults) {
+        if (geoResults == null) {
+            return false;
+        }
+
+        return !geoResults.getContent().isEmpty();
+    }
+
+    private GeoResults<RedisGeoCommands.GeoLocation<byte[]>> executeGeoRadiusByRestaurantCacheDto(
+            RedisConnection connection,
+            RestaurantCacheDto restaurantCacheDto) {
+
+        return connection.geoCommands()
+                .geoRadius(
+                        (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
+                        cacheUtils.getCircle(restaurantCacheDto.getLatitude(), restaurantCacheDto.getLongitude(), 0.01, Metrics.KILOMETERS)
+                );
+    }
+
+    private RestaurantCacheDto createRestaurantCacheDto(List<Rating> ratings, Restaurant restaurant) {
+        return RestaurantCacheDto.setCache(
+                restaurant,
+                sumRatings(ratings),
+                ratings.size()
+        );
+    }
+
+    private Double sumRatings(List<Rating> ratings) {
+        return Double.valueOf(ratings.stream()
+                .reduce(0, (total, rating) -> total + rating.getValue(), Integer::sum));
     }
 }
