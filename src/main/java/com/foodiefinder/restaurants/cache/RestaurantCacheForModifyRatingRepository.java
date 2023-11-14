@@ -20,18 +20,17 @@ import java.util.Objects;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class RatingCacheRepository {
+public class RestaurantCacheForModifyRatingRepository {
     private final CacheUtils cacheUtils;
 
-    /**
-     * 유저가 평가할떄 redis 와 동기화 하기 위한 메서드
-     */
+
     public void modifyRatingAtRestaurantCache(Restaurant restaurant) {
         log.info("id {} 에 대한 캐시 동기화",restaurant.getId());
 
         Double latitude = restaurant.getLatitude();
         Double longitude = restaurant.getLongitude();
 
+        // 분리
         List<Rating> ratings = restaurant.getRatings();
         int count = ratings.size();
         Double sumRatings = Double.valueOf(ratings.stream()
@@ -39,16 +38,20 @@ public class RatingCacheRepository {
 
         RestaurantCacheDto restaurantCacheDto = RestaurantCacheDto.setCache(restaurant, sumRatings / count, count);
 
+        
         try (RedisConnection connection = cacheUtils.getConnection()) {
+            // 분리
             GeoResults<RedisGeoCommands.GeoLocation<byte[]>> geoResults = connection.geoCommands()
                     .geoRadius(
                             (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
                             cacheUtils.getCircle(latitude, longitude, 0.01, Metrics.KILOMETERS)
                     );
 
-
+            
+            // 분리
             if(!geoResults.getContent().isEmpty()) {
 
+                // 분리
                 geoResults.getContent()
                     .stream()
                         .filter(Objects::nonNull)
@@ -69,6 +72,8 @@ public class RatingCacheRepository {
                         });
                 return;
             }
+            
+            // 분리, 중복 통합
             connection.geoCommands()
                     .geoAdd(
                             (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
