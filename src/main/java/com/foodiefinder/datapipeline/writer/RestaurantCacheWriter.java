@@ -50,7 +50,7 @@ public class RestaurantCacheWriter implements ItemWriter<List<Restaurant>> {
             return null;
         }
 
-        List<Rating> ratings = ratingRepository.findByRestaurantId(restaurant.getId());
+        List<Rating> ratings = ratingRepository.findByRestaurantId(foundRestaurant.getId());
         return createRestaurantCacheDto(foundRestaurant, ratings);
     }
 
