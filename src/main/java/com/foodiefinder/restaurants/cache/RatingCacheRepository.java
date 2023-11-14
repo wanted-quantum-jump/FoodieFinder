@@ -8,12 +8,15 @@ import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.restaurants.entity.Rating;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Repository
@@ -38,34 +41,42 @@ public class RatingCacheRepository {
 
         RestaurantCacheDto restaurantCacheDto = RestaurantCacheDto.setCache(restaurant, sumRatings / count, count);
 
-        RedisConnection connection = cacheUtils.getConnection();
+        try (RedisConnection connection = cacheUtils.getConnection()) {
+            GeoResults<RedisGeoCommands.GeoLocation<byte[]>> geoResults = connection.geoCommands()
+                    .geoRadius(
+                            (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
+                            cacheUtils.getCircle(latitude, longitude, 0.01, Metrics.KILOMETERS)
+                    );
 
-        List<String> nearSGGList = sggCacheRepository.findNearSGG(connection, latitude, longitude);
 
-        nearSGGList.stream()
-                .map(
-                        sgg -> connection.geoCommands()
-                                .geoRadius(
-                                        (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + sgg).getBytes(),
-                                        cacheUtils.getCircle(latitude, longitude, 0.1, Metrics.KILOMETERS))
-                )
-                .filter(data -> data.getContent().size() > 0)
-                .flatMap(data -> data.getContent().stream())
-                .filter(data -> Long.valueOf(cacheUtils.decodeFromByteArray(data.getContent().getName()).split(":")[0]).equals(restaurant.getId()))
-                .forEach(data -> {
-                    connection.zSetCommands()
-                            .zRem(
-                                    (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
-                                    data.getContent().getName()
-                            );
+            if(!geoResults.getContent().isEmpty()) {
 
-                    connection.geoCommands()
-                            .geoAdd(
-                                    (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
-                                    new Point(restaurant.getLongitude(), restaurant.getLatitude()),
-                                    (restaurantCacheDto.toString()).getBytes()
-                            );
-                });
-        connection.close();
+                geoResults.getContent()
+                    .stream()
+                        .filter(Objects::nonNull)
+                        .filter(data -> Long.valueOf(cacheUtils.decodeFromByteArray(data.getContent().getName()).split(":")[0]).equals(restaurant.getId()))
+                        .forEach(data -> {
+                            connection.zSetCommands()
+                                    .zRem(
+                                            (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
+                                            data.getContent().getName()
+                                    );
+
+                            connection.geoCommands()
+                                    .geoAdd(
+                                            (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
+                                            new Point(longitude, latitude),
+                                            (restaurantCacheDto.toString()).getBytes()
+                                    );
+                        });
+                return;
+            }
+            connection.geoCommands()
+                    .geoAdd(
+                            (CacheKeyPrefix.MAP_SGG.getKeyPrefix() + restaurantCacheDto.getSigunName()).getBytes(),
+                            new Point(longitude, latitude),
+                            (restaurantCacheDto.toString()).getBytes()
+                    );
+        }
     }
 }
