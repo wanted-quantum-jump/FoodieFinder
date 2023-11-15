@@ -68,7 +68,7 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 
 ## 2. 프로젝트 요구사항
 
-[🍣지리기반 맛집 추천 웹 서비스 요구사항](https://bow-hair-db3.notion.site/a9a2ec57b65545e4be7da370c4649007)
+[🍣지리기반 맛집 추천 웹 서비스 요구사항](https://hyerijang.notion.site/ed13c3afee524dc38a6a86a29489a75e?pvs=4)
 
 ### 유저스토리
 
@@ -109,6 +109,7 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 <details>
     <summary>자세히</summary>
 
+#### main
 ```
 ├─main
 │  ├─java
@@ -175,7 +176,11 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 │  │              ├─repository
 │  │              └─service
 │  └─resources
-└─test
+```
+
+#### test
+``` 
+│─test
 ├─java
 │  └─com
 │      └─foodiefinder
@@ -210,15 +215,21 @@ FoodieFinder는 공공데이터를 활용하여, 지역 음식점 목록을 자�
 <details>
     <summary>자세히</summary>
 
-<img src="https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/ff5974e4-0060-4e6d-9fcd-114e0b6eadd7" width="70%" />
+<img src="https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/ff5974e4-0060-4e6d-9fcd-114e0b6eadd7" width="60%" />
 
 
 </details>
 
 ## 6. 동작예시
-디스코드 점심 추천 서비스 예시
 
-![image](https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/b468a807-76fb-4957-a647-6f23ae79ea0a)
+### RDS
+<img src="https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/78288c73-15cc-4b73-adfe-e31bafb62708" width="60%" />
+<img src="https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/98e8fcb9-8abb-41c6-987d-ceba9676dbc3" width="60%" />
+
+
+### 디스코드 점심 추천 서비스 예시
+
+<img src="https://github.com/wanted-quantum-jump/FoodieFinder/assets/46921979/b468a807-76fb-4957-a647-6f23ae79ea0a" width="60%" />
 
 ## 7. API Document
 최신 문서는 [FoodieFinder API Document](https://documenter.getpostman.com/view/13712893/2s9YXiY1Kv)를 참조해 주세요.
