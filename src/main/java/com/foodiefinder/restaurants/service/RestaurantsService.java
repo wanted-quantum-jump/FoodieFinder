@@ -6,7 +6,7 @@ import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
-import com.foodiefinder.restaurants.cache.RestaurantCacheRepository;
+import com.foodiefinder.restaurants.cache.RestaurantCacheSearchRepository;
 import com.foodiefinder.restaurants.cache.RestaurantDetailCacheRepository;
 import com.foodiefinder.restaurants.dto.RestaurantCacheResponse;
 import com.foodiefinder.restaurants.dto.RestaurantDetailResponse;
@@ -25,7 +25,7 @@ public class RestaurantsService {
     private static final double EARTH_RADIUS_KM = 6371.0;
     private static final String SORT_BY_RATING = "rating";
     private final RestaurantRepository restaurantRepository;
-    private final RestaurantCacheRepository restaurantCacheRepository;
+    private final RestaurantCacheSearchRepository restaurantCacheSearchRepository;
     private final RestaurantDetailCacheRepository restaurantDetailCacheRepository;
 
     /**
@@ -34,9 +34,9 @@ public class RestaurantsService {
     public Response<List<RestaurantCacheResponse>> getRestaurantsFromCache(String lat, String lon, double range, String orderBy) {
         double latitude = Double.parseDouble(lat);
         double longitude = Double.parseDouble(lon);
-        List<RestaurantCacheResponse> restaurantCacheRespons = restaurantCacheRepository.createRestaurantsCacheResponse(latitude, longitude, range, orderBy);
+        List<RestaurantCacheResponse> restaurantCacheResponse = restaurantCacheSearchRepository.findAllRestaurantCache(latitude, longitude, range, orderBy);
 
-        return Response.success(restaurantCacheRespons);
+        return Response.success(restaurantCacheResponse);
     }
 
     public Response<List<RestaurantDetailResponse>> getRestaurants(String lat, String lon, double range, String orderBy) {
@@ -88,7 +88,7 @@ public class RestaurantsService {
      */
     public Response<RestaurantDetailResponse> getRestaurantDetail(Long restaurantId) {
 
-        RestaurantDetailResponse responseFromCache = restaurantDetailCacheRepository.findByIdFromCache(restaurantId);
+        RestaurantDetailResponse responseFromCache = restaurantDetailCacheRepository.findByIdFromRestaurantDetailCache(restaurantId);
         if (responseFromCache != null) {
             return Response.success(responseFromCache);
         }

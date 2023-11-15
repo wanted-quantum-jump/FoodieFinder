@@ -7,13 +7,15 @@ import com.foodiefinder.datapipeline.writer.repository.ForCacheRestaurantReposit
 import com.foodiefinder.restaurants.entity.Rating;
 import com.foodiefinder.restaurants.entity.RatingRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RestaurantCacheWriter implements ItemWriter<List<Restaurant>> {
@@ -24,30 +26,42 @@ public class RestaurantCacheWriter implements ItemWriter<List<Restaurant>> {
     @Override
     public void write(List<Restaurant> input) {
         List<RestaurantCacheDto> restaurantCacheDtoList = input.stream()
-                .map(data -> {
-                    Restaurant restaurant = forCacheRestaurantRepository.findByBusinessPlaceNameAndRoadAddress(
-                            data.getBusinessPlaceName(),
-                            data.getRoadAddress()
-                    ).orElse(null);
-
-                    if (restaurant == null) {
-                        return null;
-                    }
-
-                    List<Rating> ratings = ratingRepository.findByRestaurantId(restaurant.getId());
-
-                    if (ratings.isEmpty()) {
-                        return RestaurantCacheDto.setCache(restaurant, 0.0, 0);
-                    } else {
-                        int count = ratings.size();
-                        Double sumRatings = Double.valueOf(ratings.stream()
-                                .reduce(0, (total, rating) -> total + rating.getValue(), Integer::sum));
-                        return RestaurantCacheDto.setCache(restaurant, (sumRatings / count),count);
-                    }
-                })
+                .map(this::toRestaurantCacheDto)
                 .filter(Objects::nonNull)
                 .toList();
 
-        dataPipelineRestaurantCacheRepository.inputDataPipelineRestaurantCache(restaurantCacheDtoList);
+        List<GeoResults<RedisGeoCommands.GeoLocation<byte[]>>> geoResultsListWithPipelineByRestaurantDtoList =
+                dataPipelineRestaurantCacheRepository.findGeoResultsListByRestaurantDtoList(restaurantCacheDtoList);
+
+        List<RestaurantCacheDto> needUpdateRestaurantCacheDtoList =
+                dataPipelineRestaurantCacheRepository.needModifyRestaurantCacheDtoList(
+                        geoResultsListWithPipelineByRestaurantDtoList,
+                        restaurantCacheDtoList);
+
+        dataPipelineRestaurantCacheRepository.inputRestaurantCache(needUpdateRestaurantCacheDtoList);
+    }
+
+
+    private RestaurantCacheDto toRestaurantCacheDto(Restaurant restaurant) {
+        Restaurant foundRestaurant = forCacheRestaurantRepository.findByBusinessPlaceNameAndRoadAddress(restaurant.getBusinessPlaceName(), restaurant.getRoadAddress())
+                .orElse(null);
+
+        if (foundRestaurant == null) {
+            return null;
+        }
+
+        List<Rating> ratings = ratingRepository.findByRestaurantId(foundRestaurant.getId());
+        return createRestaurantCacheDto(foundRestaurant, ratings);
+    }
+
+    private RestaurantCacheDto createRestaurantCacheDto(Restaurant restaurant, List<Rating> ratings) {
+        if (ratings.isEmpty()) {
+            return RestaurantCacheDto.setCache(restaurant, 0.0, 0);
+        }
+
+        int count = ratings.size();
+        Double sumRatings = Double.valueOf(ratings.stream()
+                .reduce(0, (total, rating) -> total + rating.getValue(), Integer::sum));
+        return RestaurantCacheDto.setCache(restaurant, (sumRatings / count),count);
     }
 }

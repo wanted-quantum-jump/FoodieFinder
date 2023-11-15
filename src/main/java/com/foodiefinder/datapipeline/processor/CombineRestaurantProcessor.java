@@ -19,12 +19,15 @@ public class CombineRestaurantProcessor implements ItemProcessor<String, Combine
 
     @Override
     public CombineRestaurantProcessorResultData process(String item) {
-        // response 캐싱 : response 바디 문자열 전문, 응답이 다를경우 저장
+
         if(!dataPipelineApiResponseCacheRepository.hasResponseCache(item)) {
             List<RawRestaurant> rawRestaurants = rawRestaurantProcessor.process(item);
             List<Restaurant> restaurants = restaurantProcessor.process(rawRestaurants);
             return CombineRestaurantProcessorResultData.of(item, rawRestaurants, restaurants);
         }
-        return null;
+        else{
+            dataPipelineApiResponseCacheRepository.executeModifyExpire(item);
+            return null;
+        }
     }
 }

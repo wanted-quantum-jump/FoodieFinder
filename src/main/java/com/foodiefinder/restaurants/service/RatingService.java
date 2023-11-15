@@ -5,16 +5,17 @@ import com.foodiefinder.common.exception.CustomException;
 import com.foodiefinder.common.exception.ErrorCode;
 import com.foodiefinder.datapipeline.writer.entity.Restaurant;
 import com.foodiefinder.datapipeline.writer.repository.RestaurantRepository;
-import com.foodiefinder.restaurants.cache.RatingCacheRepository;
+import com.foodiefinder.restaurants.cache.RestaurantCacheForModifyRatingRepository;
 import com.foodiefinder.restaurants.dto.RatingRequest;
 import com.foodiefinder.restaurants.entity.Rating;
 import com.foodiefinder.restaurants.entity.RatingRepository;
 import com.foodiefinder.user.entity.User;
 import com.foodiefinder.user.repository.UserRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class RatingService {
     private final RatingRepository ratingRepository;
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
-    private final RatingCacheRepository ratingCacheRepository;
+    private final RestaurantCacheForModifyRatingRepository restaurantCacheModifyRatingRepository;
 
     /**
      * 맛집 평가 캐시 정보 동기화
@@ -34,7 +35,7 @@ public class RatingService {
         createAndSaveRating(user, restaurant, dto);
         updateRestaurantWithAverageRating(restaurant, restaurantId);
         
-        ratingCacheRepository.inputRatingCache(restaurant);
+        restaurantCacheModifyRatingRepository.modifyRatingAtRestaurantCache(restaurant);
 
         return Response.successVoid();
     }
